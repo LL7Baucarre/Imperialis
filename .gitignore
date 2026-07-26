@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.pyc
+imperialis.db
+*.db
+
+# Données runtime (produites par le scraper, non versionnées)
+#   - missions.json est versionné : métadonnées scrapées (noms de decks/cartes,
+#     matrix, taglines courtes), aucun texte de règle copyrighté.
+app/static/card_images/
+app/data/units_cache.json
+
+# BSData : inclus comme sous-module git (wh40k-11e) -> ne pas l'ignorer.
+
+# Codex PDF (copyright Games Workshop) — ne pas versionner
+Rules and codex/
+
+# Workflows / plans Claude
+.claude/workflows/
+.claude/plans/

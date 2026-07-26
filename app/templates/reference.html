@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Référence — {{ player.faction_name }}{% endblock %}
+{% block heading %}<span class="pill p{{ seat }}">Joueur {{ seat }}</span> Référence codex{% endblock %}
+{% block content %}
+<div class="card">
+  <h2>{{ player.faction_name }}
+    {% if player.detachment %}<span class="small muted">· détachement actif : {{ player.detachment }}</span>{% endif %}
+  </h2>
+  {% if codex_pdf %}
+    <p>Ouvrir le codex PDF VF : <a class="btn" href="{{ url_for('game.codex_file', filename=codex_pdf) }}" target="_blank">📄 {{ codex_pdf }}</a></p>
+  {% else %}
+    <p class="muted small">Aucun PDF de codex correspondant trouvé dans <code>Rules and codex/</code>.</p>
+  {% endif %}
+</div>
+
+<div class="card">
+  <h2>Détachements ({{ detachments|length }})</h2>
+  {% for d in detachments %}
+  <details class="unit">
+    <summary><b>{{ d.name }}</b></summary>
+    <div class="small" style="margin:6px 0">{{ (d.rule or '') | bsd }}</div>
+    {% if d.stratagems %}
+      <div class="small"><b>Stratagems :</b>
+        <ul class="abil">{% for s in d.stratagems %}<li><b>{{ s.name }}</b>{% if s.cp %} ({{ s.cp }} CP){% endif %} — {{ (s.text or '') | bsd }}</li>{% endfor %}</ul>
+      </div>
+    {% endif %}
+    {% if d.enhancements %}
+      <div class="small"><b>Enhancements :</b>
+        <ul class="abil">{% for e in d.enhancements %}<li><b>{{ e.name }}</b>{% if e.cost %} ({{ e.cost }} pts){% endif %} — {{ (e.text or '') | bsd }}</li>{% endfor %}</ul>
+      </div>
+    {% endif %}
+  </details>
+  {% else %}
+    <p class="muted small">Aucun détachement chargé.</p>
+  {% endfor %}
+</div>
+
+<div class="card">
+  <h2>Capacités / traits de faction ({{ faction_abilities|length }})</h2>
+  <details class="unit"><summary>Afficher…</summary>
+    <ul class="abil">
+    {% for a in faction_abilities %}
+      <li><b>{{ a.name }}</b> — <span class="small">{{ (a.description or '') | bsd }}</span></li>
+    {% endfor %}
+    </ul>
+  </details>
+</div>
+
+<a class="btn" href="{{ url_for('game.play', gid=g.id) }}">← Retour au plateau</a>
+{% endblock %}

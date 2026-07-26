@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Imperialis{% endblock %} — Assistant WH40k 11e</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+</head>
+<body>
+<header class="topbar">
+  <div class="topline">
+    <span class="brand">⚔️ IMPERIALIS</span>
+    <h1>{% block heading %}{% endblock %}</h1>
+    <nav>
+      <a href="{{ url_for('setup.home') }}">Parties</a>
+      {% if g.id is defined and g.id %}
+        {% if g.status == 'playing' %}
+          <a class="active" href="{{ url_for('game.play', gid=g.id) }}">Plateau</a>
+          <a href="{{ url_for('game.board', gid=g.id) }}">Carte</a>
+          <a href="{{ url_for('game.tracker', gid=g.id) }}">Tracker VP</a>
+        {% elif g.status == 'setup' %}
+          <a class="active" href="{{ url_for('setup.setup_hub', gid=g.id) }}">Configuration</a>
+        {% elif g.status == 'finished' %}
+          <a href="{{ url_for('game.tracker', gid=g.id) }}">Résumé VP</a>
+        {% endif %}
+      {% endif %}
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for cat, msg in messages %}
+        <div class="flash {{ 'ok' if cat=='message' else cat }}">{{ msg }}</div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+  {% block content %}{% endblock %}
+</main>
+
+{% block scripts %}{% endblock %}
+</body>
+</html>

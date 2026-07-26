@@ -1,0 +1,253 @@
+{% extends "base.html" %}
+{% from "macros.html" import phase_bar, statline, unit_panel, card_text %}
+{% block title %}{{ g.name }} — R{{ g.round }} {{ phase }}{% endblock %}
+{% block heading %}{{ g.name }}{% endblock %}
+
+{% block content %}
+{# ---- Barre de statut ---- #}
+<div class="card">
+  <div class="row" style="align-items:center;flex-wrap:wrap">
+    <div>
+      <div class="small muted">BATTLE ROUND</div>
+      <div style="font-size:1.4rem;font-weight:700">{{ g.round }} / {{ MAX_ROUNDS }}</div>
+    </div>
+    <div style="flex:1">
+      {{ phase_bar(phase) }}
+      <div class="small muted">Joueur actif :
+        <span class="pill p{{ active_seat }}">Joueur {{ active_seat }} — {{ active_player.name }}</span>
+        ({{ active_player.faction_name }}{% if active_player.detachment %} · {{ active_player.detachment }}{% endif %})
+      </div>
+    </div>
+    <form method="post" id="advance-form">
+      <button class="primary" type="button" onclick="Game.advance()">▶ Phase suivante</button>
+    </form>
+  </div>
+
+  <div class="grid2" style="margin-top:10px">
+    {% for seat in [1,2] %}
+    <div class="card" style="margin:0;background:var(--panel-2)">
+      <span class="pill p{{ seat }}">Joueur {{ seat }} — {{ players[seat].name }}</span>
+      <div class="row" style="margin-top:6px;align-items:center">
+        <div><span class="small muted">CP</span>
+          <span id="cp_{{ players[seat].id }}" style="font-size:1.2rem;font-weight:700;color:var(--warn)">{{ players[seat].cp }}</span>
+          <button class="ghost small" onclick="Game.adjCP({{ players[seat].id }},+1)">+</button>
+          <button class="ghost small" onclick="Game.adjCP({{ players[seat].id }},-1)">−</button>
+        </div>
+        <div><span class="small muted">VP</span>
+          <span id="vp_{{ players[seat].id }}" style="font-size:1.2rem;font-weight:700;color:var(--accent)">{{ players[seat].vp_total }}</span>
+          <button class="ghost small" onclick="Game.adjVP({{ players[seat].id }},+1)">+</button>
+          <button class="ghost small" onclick="Game.adjVP({{ players[seat].id }},-1)">−</button>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="grid2">
+  {# ---- Colonne gauche : carte de phase + résolveur ---- #}
+  <div>
+    <div class="card">
+      <h2>{{ assist.title }}</h2>
+      <div class="small muted">{{ assist.subtitle }}</div>
+
+      {% if assist.detachment_rule %}
+      <div class="det-rule">
+        <div class="small"><b>{{ assist.detachment_rule[0] }}</b> — règle de détachement</div>
+        <div class="small muted">{{ assist.detachment_rule[1]|bsd }}</div>
+      </div>
+      {% endif %}
+
+      {% if phase == 'Command' %}
+      <div class="bs-tool">
+        <h3 style="margin-top:10px">🧠 Test de Battle Shock</h3>
+        <div class="small muted">Command phase : pour chaque unité sous demi-effectif, lance 2D6 et compare au Commandement (LD). Si le total &gt; LD, l'unité est <b>battle-shocked</b> jusqu'à la fin du round.</div>
+        <div class="row" style="margin-top:6px;align-items:center;gap:8px;flex-wrap:wrap">
+          <select id="bs_unit" class="bs-select" style="flex:1;min-width:220px;padding:6px"></select>
+          <button class="btn small" onclick="BattleShock.roll()">🎲 Lancer 2D6</button>
+        </div>
+        <div id="bs_result" class="small" style="margin-top:6px"></div>
+      </div>
+      {% endif %}
+
+      <h3 style="margin-top:10px">Actions à faire</h3>
+      <ul class="actions" id="actions">
+        {% for a in assist.actions %}
+        <li class="act-{{ a.kind }}" data-id="{{ a.id }}">
+          <span class="who">[{{ a.who }}]</span>
+          {% if a.kind == 'unit' %}<span class="act-unit">{{ a.unit }} · {{ a.name }}</span>
+          <span class="small act-desc">{{ a.text|bsd|safe }}</span>
+          {% else %}<span>{{ a.text }}</span>{% endif %}
+        </li>
+        {% else %}
+        <li class="muted small">Aucune action contextuelle.</li>
+        {% endfor %}
+      </ul>
+
+      <details style="margin-top:8px">
+        <summary class="small" style="cursor:pointer;color:var(--accent)">Récapitulatif (checklist générique)</summary>
+        <ul class="checklist" id="checklist">
+          {% for c in assist.checklist %}
+          <li data-id="{{ c.id }}">
+            <input type="checkbox" class="chk" data-id="{{ c.id }}">
+            <span><span class="who">[{{ c.who }}]</span> {{ c.text }}</span>
+          </li>
+          {% endfor %}
+        </ul>
+      </details>
+
+      {% if phase == 'Shooting' and wound_table %}
+      <div class="small" style="margin-top:8px">
+        <b>Table de blessure :</b>
+        {% for w in wound_table %}<span class="pill" style="margin:2px">{{ w.attacker_str }} → {{ w.wound_on }}</span>{% endfor %}
+      </div>
+      {% endif %}
+
+      <h3 style="margin-top:12px">Interventions / Stratagems</h3>
+      {% set opp_seat = 2 if active_seat == 1 else 1 %}
+      {% set opp_player = players[opp_seat] %}
+      {% for iv in assist.interventions %}
+      {% set iv_owner = iv.owner or 'both' %}
+      {% set iv_pid = opp_player.id if iv_owner == 'opponent' else active_player.id %}
+      <div class="interv {{ 'interv-opp' if iv_owner == 'opponent' else '' }}">
+        <b>{{ iv.name }}</b> <span class="cp">{{ iv.cp }} CP</span>
+        <span class="small muted">· {{ iv.window }}</span>
+        {% if iv_owner == 'opponent' %}<span class="pill" style="background:#7f1d1d;color:#fee2e2;font-size:.68rem">Adversaire</span>
+        {% elif iv_owner == 'both' %}<span class="pill" style="font-size:.68rem">Les deux</span>{% endif %}
+        <button class="ghost small" style="float:right" onclick="Game.useStratagem({{ iv_pid }}, {{ iv.name|tojson|forceescape }}, {{ iv.cp or 0 }})">Utiliser</button>
+        <div class="small muted">{{ iv.note }}</div>
+      </div>
+      {% endfor %}
+
+      <h3 style="margin-top:12px">Annotation</h3>
+      <textarea id="anno-text" rows="2" placeholder="Action à faire, note…"></textarea>
+      <button class="ghost small" onclick="Game.saveAnnotation({{ active_player.id }})">Enregistrer l'annotation</button>
+      <div id="anno-list" style="margin-top:8px">
+        {% for a in annotations %}
+        <div class="annotation"><span class="small muted">R{{ a.round }} {{ a.phase }}</span> · {{ a.text }}</div>
+        {% endfor %}
+      </div>
+    </div>
+
+    {# ---- Encart résolveur d'attaque (avec dés) ---- #}
+    <div class="card">
+      <h2>⚔️ Résolveur d'attaque</h2>
+      <div class="small muted">Choisir l'attaquant et son arme, puis le défenseur. Le calcul donne les jets nécessaires ; les boutons lancent les dés (client).</div>
+      <div class="grid2" style="margin-top:8px">
+        <div>
+          <label class="small">Attaquant</label>
+          <select id="rsv_a" style="width:100%;padding:6px"></select>
+          <label class="small" style="margin-top:6px">Arme</label>
+          <select id="rsv_w" style="width:100%;padding:6px"></select>
+        </div>
+        <div>
+          <label class="small">Défenseur</label>
+          <select id="rsv_d" style="width:100%;padding:6px"></select>
+          <div id="rsv_def_stats" class="small muted" style="margin-top:6px"></div>
+        </div>
+      </div>
+      <button class="ghost small" style="margin-top:8px" onclick="Resolver.compute()">Calculer</button>
+      <div id="rsv_result" style="margin-top:8px"></div>
+    </div>
+  </div>
+
+  {# ---- Colonne droite : mission + plateau interactif + rosters ---- #}
+  <div>
+    <div class="card">
+      <h2>Mission</h2>
+      {% if missions %}
+      <div class="grid2">
+        <div class="mission-card">
+          <div class="small"><span class="pill p1">J1</span> {{ missions.primary_card_p1 or '—' }}</div>
+          {% if p1_img %}<img class="zoomable" src="{{ p1_img }}" alt="{{ missions.primary_card_p1 }}">{% endif %}
+          {% if p1_text %}<details class="ct-collapse"><summary>Texte de la carte</summary>{{ card_text(p1_text) }}</details>{% endif %}
+        </div>
+        <div class="mission-card">
+          <div class="small"><span class="pill p2">J2</span> {{ missions.primary_card_p2 or '—' }}</div>
+          {% if p2_img %}<img class="zoomable" src="{{ p2_img }}" alt="{{ missions.primary_card_p2 }}">{% endif %}
+          {% if p2_text %}<details class="ct-collapse"><summary>Texte de la carte</summary>{{ card_text(p2_text) }}</details>{% endif %}
+        </div>
+      </div>
+
+      <h3 class="small" style="margin-top:10px">Force Disposition</h3>
+      <div class="grid2">
+        {% for seat in [1,2] %}
+        {% set fd_img = (fd_p1_img if seat==1 else fd_p2_img) %}
+        <div class="mission-card">
+          <div class="small"><span class="pill p{{ seat }}">J{{ seat }}</span> {{ missions['force_disposition_p'~seat] or '—' }}</div>
+          {% if fd_img %}<img class="zoomable" src="{{ fd_img }}" alt="Force disposition J{{ seat }}">{% endif %}
+        </div>
+        {% endfor %}
+      </div>
+
+      {% if layout_img %}
+      <h3 class="small" style="margin-top:10px">Layout de terrain</h3>
+      <div class="mission-card">
+        <div class="small muted">{{ missions.primary_deck_p1 }} vs {{ missions.primary_deck_p2 }}</div>
+        <img class="zoomable" src="{{ layout_img }}" alt="Layout {{ missions.primary_deck_p1 }} vs {{ missions.primary_deck_p2 }}">
+        {% if layout_battlemaster_url %}<a class="small" href="{{ layout_battlemaster_url }}" target="_blank">Battlemaster ↗</a>{% endif %}
+      </div>
+      {% endif %}
+
+      <div class="small muted" style="margin-top:6px">
+        Secondaires — Att. {{ missions.secondary_attacker or '—' }} · Déf. {{ missions.secondary_defender or '—' }}
+      </div>
+      {% if sec_att_text or sec_def_text %}
+      <div class="grid2" style="margin-top:6px">
+        {% if sec_att_text %}<div><div class="small"><span class="pill p1">Att.</span></div>{{ card_text(sec_att_text) }}</div>{% endif %}
+        {% if sec_def_text %}<div><div class="small"><span class="pill p2">Déf.</span></div>{{ card_text(sec_def_text) }}</div>{% endif %}
+      </div>
+      {% endif %}
+      {% else %}
+      <p class="muted small">Aucune mission configurée. <a href="{{ url_for('setup.mission', gid=g.id) }}">Choisir</a></p>
+      {% endif %}
+      <a class="small" href="{{ url_for('game.tracker', gid=g.id) }}">📊 Tracker VP</a>
+    </div>
+
+    {# ---- Lien vers le plateau interactif (pleine page) ---- #}
+    <div class="card">
+      <h2>🗺️ Plateau interactif</h2>
+      <div class="small muted">Place tes unités sur le layout de terrain (jetons déplaçables, positions sauvegardées).</div>
+      <a class="btn" style="margin-top:8px;display:inline-block" href="{{ url_for('game.board', gid=g.id) }}">Ouvrir le plateau en grand →</a>
+    </div>
+
+    {% for seat in [1,2] %}
+    <div class="card">
+      <h2><span class="pill p{{ seat }}">Joueur {{ seat }}</span> {{ players[seat].name }}
+        <span class="small muted" style="float:right">{{ units[seat]|sum(attribute='points') }} pts</span>
+      </h2>
+      <div class="small muted" style="margin-bottom:6px">{{ players[seat].faction_name }}{% if players[seat].detachment %} · {{ players[seat].detachment }}{% endif %}
+        · <a href="{{ url_for('game.reference', gid=g.id, seat=seat) }}">référence codex</a></div>
+      {% for u in units[seat] %}
+        {{ unit_panel(u, seat) }}
+      {% else %}
+        <p class="muted small">Roster vide.</p>
+      {% endfor %}
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+{# ---- Modale unité ---- #}
+<div class="modal" id="unit-modal" onclick="if(event.target===this)UnitModal.close()">
+  <div class="box" id="unit-modal-content"></div>
+</div>
+
+{# ---- Lightbox zoom cartes ---- #}
+<div class="lightbox" id="lightbox" onclick="if(event.target===this)Zoom.close()">
+  <img id="lightbox-img" alt="">
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const GID = {{ g.id }};
+const UNITS = {{ units_json|tojson }};
+const ACTIVE_SEAT = {{ active_seat }};
+</script>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+<script>
+Resolver.init();
+BattleShock.init();
+</script>
+{% endblock %}

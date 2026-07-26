@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Démarrage — {{ g.name }}{% endblock %}
+{% block heading %}Démarrage de la partie{% endblock %}
+{% block content %}
+<div class="card">
+  <h2>Récapitulatif</h2>
+  <div class="grid2">
+    {% for seat in [1,2] %}
+    <div>
+      <h3><span class="pill p{{ seat }}">Joueur {{ seat }}</span> {{ players[seat].name }}</h3>
+      <p class="small muted">{{ players[seat].faction_name }}{% if players[seat].detachment %} · {{ players[seat].detachment }}{% endif %}</p>
+      <p class="small">Unités : {{ units[seat]|length }} · {{ units[seat]|sum(attribute='points') }} pts</p>
+      <ul class="small">
+        {% for u in units[seat] %}<li>{{ u.name }} ({{ u.points }} pts)</li>{% endfor %}
+      </ul>
+    </div>
+    {% endfor %}
+  </div>
+  {% if missions %}
+  <hr>
+  <p class="small">
+    <b>Mission primaire :</b> {{ players[1].name }} → {{ missions.primary_card_p1 or '—' }}
+    | {{ players[2].name }} → {{ missions.primary_card_p2 or '—' }}<br>
+    <b>Secondaires :</b> Att. {{ missions.secondary_attacker or '—' }} · Déf. {{ missions.secondary_defender or '—' }}
+  </p>
+  {% endif %}
+</div>
+
+<div class="card">
+  <h2>Lancer la partie</h2>
+  <form method="post" action="{{ url_for('setup.start_confirm', gid=g.id) }}">
+    <label class="small">Premier joueur (joue en premier chaque round)</label><br>
+    {% for seat in [1,2] %}
+    <label style="margin-right:14px"><input type="radio" name="first_player_seat" value="{{ seat }}" {{ 'checked' if seat==1 else '' }}>
+      Joueur {{ seat }} ({{ players[seat].name }})</label>
+    {% endfor %}
+    <br><br>
+    <button class="primary" type="submit">⚔️ Démarrer la partie</button>
+    <a class="btn" href="{{ url_for('setup.mission', gid=g.id) }}">← Mission</a>
+    <a class="btn" href="{{ url_for('setup.setup_hub', gid=g.id) }}">Hub</a>
+  </form>
+</div>
+{% endblock %}

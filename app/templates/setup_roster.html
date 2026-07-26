@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% from "macros.html" import statline %}
+{% block title %}Roster J{{ seat }} — {{ g.name }}{% endblock %}
+{% block heading %}<span class="pill p{{ seat }}">Joueur {{ seat }}</span> Roster{% endblock %}
+{% block content %}
+
+<div class="grid2">
+  {# ---- Colonne gauche : faction + détachement + browser ---- #}
+  <div>
+    <div class="card">
+      <h2>Faction &amp; détachement</h2>
+      <form method="post" action="{{ url_for('setup.set_faction', gid=g.id, seat=seat) }}">
+        <label class="small">Faction</label>
+        <select name="faction_file" onchange="this.form.submit()" style="width:100%;padding:6px">
+          <option value="">— Choisir —</option>
+          {% for f in factions %}
+            <option value="{{ f.file }}" {{ 'selected' if f.file==faction_file else '' }}>{{ f.name }}</option>
+          {% endfor %}
+        </select>
+        {% if detachments %}
+        <label class="small" style="margin-top:6px">Détachement</label>
+        <select name="detachment" style="width:100%;padding:6px">
+          <option value="">— Aucun —</option>
+          {% for d in detachments %}
+            <option value="{{ d.name }}" {{ 'selected' if d.name==player.detachment else '' }}>{{ d.name }}</option>
+          {% endfor %}
+        </select>
+        {% endif %}
+        <noscript><button class="primary" type="submit" style="margin-top:6px">Appliquer</button></noscript>
+      </form>
+    </div>
+
+    {% if faction_file %}
+    <div class="card">
+      <h2>Unités disponibles — {{ faction_name }}</h2>
+      <form method="get" style="margin-bottom:8px">
+        <input type="text" name="q" value="{{ search }}" placeholder="Rechercher…" style="padding:6px;width:55%">
+        <select name="cat" onchange="this.form.submit()" style="padding:6px">
+          <option value="">Toutes catégories</option>
+          {% for c in categories %}
+            <option value="{{ c }}" {{ 'selected' if c==category else '' }}>{{ c }}</option>
+          {% endfor %}
+        </select>
+        <button class="ghost">Filtrer</button>
+      </form>
+
+      <div style="max-height:480px;overflow:auto">
+      {% for u in units_browser %}
+        <div class="unit" style="margin-bottom:6px">
+          <form method="post" action="{{ url_for('setup.add_unit_route', gid=g.id, seat=seat) }}">
+            <input type="hidden" name="unit_id" value="{{ u.id }}">
+            <div class="uname">{{ u.name }} <span class="small muted">· {{ u.points }} pts</span></div>
+            <div class="small muted">{{ (u.categories or []) | join(', ') }}</div>
+            {{ statline(u.statline) }}
+            <div style="margin-top:4px">
+              <label class="small">Modèles: <input type="number" name="models" value="1" min="1" max="20" style="width:48px"></label>
+              <button class="primary small">+ Ajouter</button>
+            </div>
+          </form>
+        </div>
+      {% else %}
+        <p class="muted small">Aucune unité (ajuste la recherche).</p>
+      {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+  {# ---- Colonne droite : roster ---- #}
+  <div>
+    <div class="card">
+      <h2>Roster — Joueur {{ seat }} <span class="pill p{{ seat }}" style="float:right">{{ total_pts }} pts</span></h2>
+
+      <form method="post" action="{{ url_for('setup.set_points_limit', gid=g.id) }}" style="margin-bottom:10px">
+        <input type="hidden" name="seat" value="{{ seat }}">
+        <label class="small">Limite de points :
+          <input type="number" name="points_limit" value="{{ points_limit }}" min="250" max="10000" step="50" style="width:90px;padding:4px">
+        </label>
+        <button class="ghost small" type="submit">OK</button>
+      </form>
+
+      {% if issues %}
+      <div class="validation">
+        {% for iss in issues %}
+          <div class="vrule v-{{ iss.severity }}">
+            <span class="vtag">{{ {'error':'✕','warning':'⚠','info':'ℹ'}[iss.severity] }}</span>
+            {{ iss.message }}
+          </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      {% if roster %}
+        {% for u in roster %}
+        <div class="unit">
+          <div class="uname">{{ u.custom_name or u.name }} <span class="small muted">· {{ u.points }} pts · {{ u.models_total }} mod.</span></div>
+          <div class="small muted">{{ (u.categories or []) | join(', ') }}</div>
+          <form method="post" action="{{ url_for('setup.remove_unit_route', gid=g.id, unit_id=u.id) }}" style="margin-top:4px">
+            <button class="danger small">Retirer</button>
+          </form>
+        </div>
+        {% endfor %}
+      {% else %}
+        <p class="muted small">Roster vide — ajoute des unités depuis la gauche, ou importe une armée ci-dessous.</p>
+      {% endif %}
+    </div>
+
+    <div class="card">
+      <h2>Importer une armée</h2>
+      <p class="small muted">Depuis NewRecruit ou BattleScribe. Formats acceptés :
+        <code>.rosz</code> (recommandé), <code>.ros</code>, <code>.json</code> (export NewRecruit).
+        La faction et les unités reconnues seront ajoutées automatiquement.</p>
+      <form method="post" action="{{ url_for('setup.import_roster', gid=g.id, seat=seat) }}" enctype="multipart/form-data">
+        <input type="file" name="roster_file" accept=".rosz,.ros,.json,.xml" required
+               style="margin-bottom:6px;width:100%">
+        <button class="primary" type="submit">⬆ Importer le roster</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <a class="btn" href="{{ url_for('setup.setup_hub', gid=g.id) }}">← Retour au hub</a>
+      <a class="btn" href="{{ url_for('setup.roster', gid=g.id, seat=other_seat) }}">Roster Joueur {{ other_seat }} →</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

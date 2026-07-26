@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Parties{% endblock %}
+{% block heading %}Parties{% endblock %}
+{% block content %}
+
+<div class="card onboarding">
+  <h2>Bienvenue 👋</h2>
+  <p class="small">
+    Imperialis t'accompagne pendant une partie de <strong>Warhammer 40&nbsp;000 — 11e édition</strong>.
+    Il garde les roster des deux joueurs, affiche les cartes de mission, suit les phases, les
+    Points de Commande et les Points de Victoire, et t'aide à résoudre les attaques.
+  </p>
+  <ol class="howto small">
+    <li><strong>Crée une partie</strong> ci-dessous (un nom, c'est tout).</li>
+    <li><strong>Choisis la faction</strong> de chaque joueur et construis son roster — ou importe-le
+      depuis NewRecruit / BattleScribe (<code>.rosz</code>, <code>.ros</code>, <code>.json</code>).</li>
+    <li><strong>Configure la mission</strong> (dispositions de force, secondaires, terrain).</li>
+    <li><strong>Démarre</strong> — le plateau apparaît avec les phases, les dés, et le résolveur d'attaques.</li>
+  </ol>
+  <p class="small muted">Première fois ? Suis simplement les étapes numérotées de la page
+    « Configuration » après avoir créé une partie.</p>
+</div>
+
+<div class="card">
+  <h2>Nouvelle partie</h2>
+  <form method="post" action="{{ url_for('setup.new_game') }}">
+    <input type="text" name="name" placeholder="Nom de la partie (ex. Damien vs Léo)" style="padding:8px;width:60%">
+    <button class="primary" type="submit">Créer</button>
+  </form>
+</div>
+
+<div class="card">
+  <h2>Parties existantes</h2>
+  {% if games %}
+  <table class="stats" style="text-align:left">
+    <tr><th>#</th><th>Nom</th><th>Statut</th><th>Round</th><th>Créée</th><th>Actions</th></tr>
+    {% for g in games %}
+    <tr>
+      <td>{{ g.id }}</td>
+      <td>{{ g.name }}</td>
+      <td>{{ g.status }}</td>
+      <td>{{ g.round }}</td>
+      <td class="small muted">{{ g.created_at }}</td>
+      <td class="row" style="gap:8px;flex-wrap:nowrap">
+        {% if g.status == 'setup' %}
+          <a href="{{ url_for('setup.setup_hub', gid=g.id) }}">Configurer</a>
+        {% elif g.status == 'playing' %}
+          <a href="{{ url_for('game.play', gid=g.id) }}">Reprendre</a>
+        {% else %}
+          <a href="{{ url_for('game.tracker', gid=g.id) }}">Résumé</a>
+        {% endif %}
+        <form method="post" action="{{ url_for('setup.delete_game', gid=g.id) }}"
+              onsubmit="return confirm('Supprimer la partie « {{ g.name|e }} » ? Cette action est irréversible.')">
+          <button class="danger small" type="submit">Supprimer</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% else %}
+  <p class="muted">Aucune partie pour l'instant — crées-en une juste au-dessus pour commencer.</p>
+  {% endif %}
+</div>
+
+{% endblock %}

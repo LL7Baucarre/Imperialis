@@ -1,0 +1,453 @@
+/* Imperialis — styles de l'assistant de partie WH40k 11e */
+:root {
+  --bg: #0e0f13;
+  --panel: #16181f;
+  --panel-2: #1d2029;
+  --ink: #e8e9ee;
+  --muted: #9aa0ad;
+  --accent: #d4af37;        /* or impérial */
+  --accent-2: #b91c1c;       /* rouge sang */
+  --p1: #3b82f6;
+  --p2: #ef4444;
+  --ok: #16a34a;
+  --warn: #f59e0b;
+  --line: #2a2d36;
+  --radius: 8px;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Segoe UI", Roboto, system-ui, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.45;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+h1, h2, h3 { margin: 0 0 .4em; }
+h1 { font-size: 1.4rem; letter-spacing: .02em; }
+h2 { font-size: 1.1rem; }
+.muted { color: var(--muted); }
+.small { font-size: .82rem; }
+.row { display: flex; gap: 12px; }
+.col { flex: 1; }
+.center { text-align: center; }
+.wrap { max-width: 1280px; margin: 0 auto; padding: 14px; }
+
+/* Header */
+header.topbar {
+  background: linear-gradient(180deg, #14161c, #101217);
+  border-bottom: 2px solid var(--accent);
+  padding: 10px 16px;
+}
+header.topbar .topline { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+header.topbar h1 { margin: 0; color: var(--accent); }
+header.topbar nav a { color: var(--ink); margin-right: 14px; font-size: .9rem; }
+.brand { font-weight: 700; letter-spacing: .06em; }
+
+/* Badges joueurs */
+.pill { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: .75rem; font-weight: 600; }
+.p1 { background: rgba(59,130,246,.18); color: #93c5fd; border: 1px solid var(--p1); }
+.p2 { background: rgba(239,68,68,.18); color: #fca5a5; border: 1px solid var(--p2); }
+.active-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 4px; }
+
+/* Cartes / panneaux */
+.card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 14px;
+  margin-bottom: 14px;
+}
+.card h2, .card h3 { color: var(--accent); }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+@media (max-width: 900px) { .grid2, .grid3 { grid-template-columns: 1fr; } }
+
+/* Statlines */
+table.stats { border-collapse: collapse; width: 100%; font-size: .82rem; }
+table.stats th, table.stats td { border: 1px solid var(--line); padding: 4px 6px; text-align: center; }
+table.stats th { background: var(--panel-2); color: var(--muted); font-weight: 600; }
+
+/* Boutons */
+button, .btn {
+  background: var(--panel-2);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: .85rem;
+}
+button:hover, .btn:hover { border-color: var(--accent); }
+button.primary { background: var(--accent); color: #1a1a1a; border: none; font-weight: 600; }
+button.danger { background: var(--accent-2); color: #fff; border: none; }
+button.ghost { background: transparent; }
+button:disabled { opacity: .5; cursor: not-allowed; }
+
+/* Checklist */
+.checklist { list-style: none; padding: 0; margin: 0; }
+.checklist li { padding: 6px 8px; border-bottom: 1px solid var(--line); display: flex; gap: 8px; align-items: flex-start; }
+.checklist li.done { opacity: .5; text-decoration: line-through; }
+.checklist input[type=checkbox] { margin-top: 3px; }
+.who { font-size: .72rem; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+
+/* Interventions (stratagem windows) */
+.interv {
+  background: rgba(212,175,55,.07);
+  border-left: 3px solid var(--accent);
+  padding: 8px 10px;
+  margin-bottom: 8px;
+  border-radius: 4px;
+}
+.interv .cp { color: var(--warn); font-weight: 700; }
+.interv button { float: right; }
+
+/* Dés */
+.dice-face {
+  display: inline-block; width: 28px; height: 28px; line-height: 28px;
+  text-align: center; background: #fff; color: #111; border-radius: 6px;
+  font-weight: 700; margin: 2px; box-shadow: 0 1px 3px rgba(0,0,0,.4);
+}
+.dice-result .sum { color: var(--accent); font-weight: 700; margin-left: 8px; }
+.preset-row button { margin: 2px 4px 2px 0; }
+
+/* Unités */
+.unit { border: 1px solid var(--line); border-radius: 6px; padding: 8px 10px; margin-bottom: 8px; background: var(--panel-2); }
+.unit .uname { font-weight: 600; }
+.unit .meta { font-size: .75rem; color: var(--muted); }
+.unit .kw { font-size: .7rem; color: var(--muted); margin-top: 3px; }
+.unit.shocked { border-color: var(--accent-2); }
+.half { color: var(--warn); font-weight: 700; font-size: .72rem; }
+.unit details summary { cursor: pointer; }
+.unit ul.abil { margin: 4px 0; padding-left: 18px; }
+.unit ul.abil li { font-size: .8rem; margin-bottom: 4px; }
+.unit ul.abil b { color: var(--accent); }
+.weapons { font-size: .78rem; }
+
+/* Modal */
+.modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 50; padding: 30px; overflow:auto; }
+.modal.open { display: block; }
+.modal .box { max-width: 640px; margin: 0 auto; background: var(--panel); border: 1px solid var(--accent); border-radius: 10px; padding: 18px; }
+
+/* Annotations */
+textarea { width: 100%; background: var(--panel-2); color: var(--ink); border: 1px solid var(--line); border-radius: 6px; padding: 8px; font-family: inherit; }
+.annotation { border-left: 3px solid var(--muted); padding: 4px 8px; margin-bottom: 6px; font-size: .82rem; }
+
+/* Mission cards */
+.mission-card img { width: 100%; max-width: 280px; border-radius: 8px; border: 1px solid var(--line); }
+
+/* Tracker */
+table.tracker { border-collapse: collapse; width: 100%; }
+table.tracker th, table.tracker td { border: 1px solid var(--line); padding: 6px 8px; text-align: center; }
+table.tracker th { background: var(--panel-2); color: var(--muted); }
+
+/* Phase bar */
+.phasebar { display: flex; gap: 6px; margin: 8px 0; flex-wrap: wrap; }
+.phasebar .step { padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line); font-size: .8rem; color: var(--muted); }
+.phasebar .step.cur { background: var(--accent); color: #1a1a1a; border-color: var(--accent); font-weight: 600; }
+.phasebar .step.done { color: var(--ok); border-color: var(--ok); }
+
+.flash { padding: 8px 12px; border-radius: 6px; margin-bottom: 10px; }
+.flash.ok { background: rgba(22,163,74,.15); border: 1px solid var(--ok); }
+.flash.err, .flash.error { background: rgba(239,68,68,.15); border: 1px solid var(--accent-2); }
+.flash.info { background: rgba(59,130,246,.12); border: 1px solid var(--p1); }
+.flash.warning { background: rgba(245,158,11,.15); border: 1px solid var(--warn); }
+
+/* Panneau de validation de roster */
+.validation { margin-bottom: 12px; display: flex; flex-direction: column; gap: 4px; }
+.vrule { display: flex; gap: 8px; align-items: flex-start; padding: 6px 10px; border-radius: 6px; font-size: 13px; }
+.vtag { font-weight: 700; flex: 0 0 auto; width: 1.2em; text-align: center; }
+.v-error   { background: rgba(239,68,68,.14);  border: 1px solid var(--accent-2); color: #f5c2c2; }
+.v-error .vtag   { color: var(--accent-2); }
+.v-warning { background: rgba(245,158,11,.12); border: 1px solid var(--warn); color: #f6dca0; }
+.v-warning .vtag { color: var(--warn); }
+.v-info    { background: rgba(59,130,246,.10); border: 1px solid var(--p1); color: #c5d8f5; }
+.v-info .vtag    { color: var(--p1); }
+
+/* ---- UX débutants : onboarding + assistant en étapes ---- */
+.onboarding { border-left: 4px solid var(--accent); }
+.onboarding .howto { margin: 10px 0 6px; padding-left: 20px; }
+.onboarding .howto li { margin-bottom: 4px; }
+
+.wizard { background: rgba(59,130,246,.05); border-left: 4px solid var(--p1); }
+.steps { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+.steps > li { display: flex; gap: 12px; align-items: flex-start; padding: 10px 12px;
+  border-radius: 8px; border: 1px solid var(--line); }
+.steps > li.done { border-color: var(--ok); background: rgba(22,163,74,.06); }
+.steps > li.todo { border-color: var(--line); }
+.stepnum { flex: 0 0 auto; width: 26px; height: 26px; border-radius: 50%;
+  display: grid; place-items: center; font-weight: 700; }
+.steps > li.done .stepnum { background: var(--ok); color: #0c1a0c; }
+.steps > li.todo .stepnum { background: var(--line); color: var(--muted); }
+.stepbody { flex: 1; }
+.ok  { color: var(--ok); font-weight: 600; }
+.warn { color: var(--warn); font-weight: 600; }
+
+/* ============================================================ */
+/*  Animations — assouplissent l'interface (transform/opacity)  */
+/* ============================================================ */
+:root {
+  --ease-out: cubic-bezier(.4, 0, .2, 1);
+  --ease-pop: cubic-bezier(.34, 1.56, .64, 1);
+  --dur-fast: 120ms;
+  --dur: 180ms;
+  --dur-slow: 240ms;
+}
+
+/* Transitions de couleur/lift sur les éléments interactifs */
+button, .btn, .pill, .step, header.topbar nav a,
+.checklist li, .interv, .unit, .mission-card, .card, .steps > li,
+input[type="checkbox"], input[type="number"], input[type="text"], select, textarea {
+  transition: background-color var(--dur) var(--ease-out),
+              border-color var(--dur) var(--ease-out),
+              color var(--dur) var(--ease-out),
+              transform var(--dur-fast) var(--ease-out),
+              box-shadow var(--dur) var(--ease-out),
+              opacity var(--dur) var(--ease-out);
+}
+
+/* Hover lifts discrets */
+.card:hover, .unit:hover, .mission-card:hover, .interv:hover {
+  border-color: var(--accent);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, .35);
+}
+.steps > li:hover { transform: translateY(-1px); }
+
+/* Press feedback sur les boutons */
+button:active, .btn:active { transform: translateY(1px) scale(.97); }
+button.primary:active, button.danger:active { transform: translateY(1px) scale(.96); }
+
+/* Anneaux de focus clavier (dorés) — invisibles au clic souris */
+button:focus-visible, .btn:focus-visible, a:focus-visible,
+input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+input:focus, select:focus, textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(212, 175, 55, .25);
+}
+
+/* Nav : underline animé */
+header.topbar nav a {
+  border-bottom: 2px solid transparent;
+  padding-bottom: 2px;
+}
+header.topbar nav a:hover, header.topbar nav a.active {
+  border-bottom-color: var(--accent);
+  text-decoration: none;
+}
+
+/* Phase bar : la phase courante pulse doucement */
+.phasebar .step.cur { animation: cp-pulse 2.4s var(--ease-out) infinite; }
+.phasebar .step { transition: background-color var(--dur) var(--ease-out),
+                          color var(--dur) var(--ease-out),
+                          border-color var(--dur) var(--ease-out),
+                          transform var(--dur-fast) var(--ease-out); }
+.phasebar .step:hover { transform: translateY(-1px); }
+
+/* Checklist cochée : fade de la ligne */
+.checklist li { transition: opacity var(--dur) var(--ease-out),
+                          background-color var(--dur) var(--ease-out); }
+.checklist li.done { opacity: .5; }
+
+/* ---- Keyframes ---- */
+@keyframes flash-in {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.flash { animation: flash-in var(--dur-slow) var(--ease-out) both; }
+
+@keyframes modal-fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes modal-pop {
+  from { opacity: 0; transform: translateY(8px) scale(.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.modal.open { animation: modal-fade-in var(--dur-slow) var(--ease-out) both; }
+.modal.open .box { animation: modal-pop var(--dur-slow) var(--ease-pop) both; }
+
+@keyframes dice-pop {
+  0%   { opacity: 0; transform: scale(.4) rotate(-12deg); }
+  60%  { transform: scale(1.12) rotate(4deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0); }
+}
+.dice-face { animation: dice-pop 280ms var(--ease-pop) both; }
+
+@keyframes cp-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, .0); }
+  50%      { box-shadow: 0 0 0 4px rgba(212, 175, 55, .18); }
+}
+.interv .cp { transition: color var(--dur) var(--ease-out); }
+.interv:hover .cp { animation: cp-pulse 1.8s var(--ease-out) infinite; }
+
+/* Respect des préférences d'accessibilité */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Texte structuré d'une carte de mission */
+.cardtext { font-size: .82rem; }
+.ct-section { margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px dashed var(--line); }
+.ct-section:last-child { border-bottom: none; }
+.ct-when { font-weight: 600; color: var(--accent); margin-bottom: 2px; }
+.ct-rows { list-style: none; padding-left: 0; margin: 4px 0 0; }
+.ct-rows li { padding: 2px 0; display: flex; gap: 6px; align-items: baseline; flex-wrap: wrap; }
+.ct-text { flex: 1; }
+.ct-text b { color: var(--ink); }
+.ct-vp { color: var(--accent); font-weight: 700; white-space: nowrap; }
+.ct-flag { font-size: .68rem; color: var(--muted); border: 1px solid var(--line);
+  border-radius: 999px; padding: 0 6px; white-space: nowrap; }
+details.ct-collapse > summary { cursor: pointer; color: var(--accent); font-size: .82rem; margin-top: 4px; }
+
+/* ============================================================ */
+/*  Actions évolutives + règle de détachement                   */
+/* ============================================================ */
+ul.actions { list-style: none; padding: 0; margin: 0; }
+ul.actions li {
+  padding: 6px 8px; border-bottom: 1px solid var(--line);
+  display: flex; flex-direction: column; gap: 2px;
+  border-left: 3px solid transparent;
+}
+ul.actions li:last-child { border-bottom: none; }
+ul.actions li.act-start { border-left-color: var(--ok); background: rgba(22,163,74,.05); }
+ul.actions li.act-end { border-left-color: var(--warn); }
+ul.actions li.act-round { border-left-color: var(--p1); background: rgba(59,130,246,.05); }
+ul.actions li.act-unit { border-left-color: var(--accent); background: rgba(212,175,55,.05); }
+ul.actions .act-unit { color: var(--accent); font-weight: 600; font-size: .8rem; }
+.det-rule {
+  margin-top: 8px; padding: 8px 10px; border-left: 3px solid var(--accent);
+  background: rgba(212,175,55,.06); border-radius: 4px;
+}
+.bs-tool {
+  margin-top: 10px; padding: 8px 10px; border: 1px solid var(--line);
+  border-left: 3px solid var(--accent-2); border-radius: 6px;
+  background: rgba(239,68,68,.05);
+}
+.bs-tool .dice-face { width: 30px; height: 30px; line-height: 30px; font-size: .95rem; }
+.unit-ctrls .wounds-val { color: var(--accent); font-weight: 700; min-width: 38px; display: inline-block; text-align: center; }
+
+/* ============================================================ */
+/*  Résolveur (encart)                                          */
+/* ============================================================ */
+.dice-tools .btn { margin: 2px 4px 2px 0; }
+table.stats .big { font-size: 1.1rem; font-weight: 700; color: var(--accent); }
+
+/* ============================================================ */
+/*  Plateau interactif + jetons                                 */
+/* ============================================================ */
+.board-wrap { margin-top: 8px; }
+.board-large { max-width: 1100px; }
+.board {
+  position: relative; width: 100%;
+  background-color: #1b2330;
+  border: 1px solid var(--line); border-radius: 8px; overflow: hidden;
+  touch-action: none;
+}
+/* L'image du layout définit la hauteur du board (rien n'est rogné). */
+.board-img { display: block; width: 100%; height: auto; }
+/* Sans image : cadre neutre 4/3 avec grille. */
+.board-noimg { aspect-ratio: 4 / 3; }
+.board-fallback {
+  position: absolute; inset: 0; display: grid; place-items: center;
+  color: var(--muted); font-size: .85rem;
+  background-image:
+    linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+  background-size: 10% 10%;
+}
+/* Jetons ronds */
+.token {
+  position: absolute; transform: translate(-50%, -50%);
+  width: 40px; height: 40px; border-radius: 50%;
+  display: grid; place-items: center;
+  font-size: .62rem; font-weight: 700; line-height: 1.05;
+  cursor: grab; user-select: none; text-align: center;
+  border: 2px solid var(--line); background: rgba(20,22,28,.94);
+  color: var(--ink);
+  box-shadow: 0 2px 6px rgba(0,0,0,.5);
+  transition: transform var(--dur-fast) var(--ease-out), box-shadow var(--dur) var(--ease-out);
+}
+.token:hover { box-shadow: 0 4px 12px rgba(0,0,0,.7); z-index: 4; }
+.token.dragging { cursor: grabbing; transform: translate(-50%, -50%) scale(1.12); z-index: 5; }
+.token.p1 { border-color: var(--p1); background: rgba(59,130,246,.22); color: #cfe2ff; }
+.token.p2 { border-color: var(--p2); background: rgba(239,68,68,.22); color: #ffe2e2; }
+.token.shocked { border-style: dashed; opacity: .8; }
+.token.dead {
+  border-style: dashed; border-color: #555 !important;
+  background: rgba(40,40,40,.85); color: #888;
+  opacity: .65; filter: grayscale(.6);
+}
+.token.dead .token-init { text-decoration: line-through; }
+.token .token-init { pointer-events: none; overflow: hidden; max-width: 34px; }
+.token .token-hp {
+  position: absolute; bottom: -6px; right: -6px;
+  min-width: 18px; height: 18px; padding: 0 3px; border-radius: 999px;
+  background: var(--accent); color: #1a1a1a; font-size: .6rem; font-weight: 700;
+  display: grid; place-items: center; box-shadow: 0 1px 3px rgba(0,0,0,.6);
+  pointer-events: none;
+}
+.token.dead .token-hp { background: #555; color: #ddd; }
+/* Boutons d'action du jeton (split / mort / retrait) */
+.token .token-acts {
+  position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 2px; pointer-events: none;
+}
+.token .token-act {
+  width: 18px; height: 18px; line-height: 16px; padding: 0; border-radius: 50%;
+  font-size: .68rem; font-weight: 700; cursor: pointer; pointer-events: auto;
+  border: 2px solid var(--bg); display: none;
+}
+.token:hover .token-act { display: block; }
+.token .token-split { background: #2563eb; color: #fff; }
+.token .token-dead  { background: #111827; color: #fca5a5; border-color: #374151; }
+.token .token-x     { background: var(--accent-2); color: #fff; }
+/* Tooltip nom au survol */
+.token::after {
+  content: attr(data-label); position: absolute; bottom: calc(100% + 6px); left: 50%;
+  transform: translateX(-50%); white-space: nowrap;
+  background: #000; color: #fff; padding: 2px 6px; border-radius: 4px;
+  font-size: .68rem; font-weight: 500; pointer-events: none; opacity: 0;
+  transition: opacity var(--dur) var(--ease-out); z-index: 6;
+}
+.token:hover::after { opacity: .95; }
+.board-palette { margin-top: 10px; }
+.token-chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  margin: 3px 4px 3px 0; padding: 3px 10px 3px 4px;
+  border-radius: 999px; font-size: .75rem; cursor: pointer;
+  background: var(--panel-2); border: 1px solid var(--line);
+}
+.token-chip .dot {
+  width: 14px; height: 14px; border-radius: 50%; border: 2px solid;
+  display: inline-block; flex: 0 0 auto;
+}
+.token-chip.p1 { border-color: var(--p1); color: #93c5fd; }
+.token-chip.p1 .dot { border-color: var(--p1); background: rgba(59,130,246,.3); }
+.token-chip.p2 { border-color: var(--p2); color: #fca5a5; }
+.token-chip.p2 .dot { border-color: var(--p2); background: rgba(239,68,68,.3); }
+.token-chip:hover { border-color: var(--accent); }
+
+/* ============================================================ */
+/*  Lightbox (zoom cartes)                                      */
+/* ============================================================ */
+.lightbox {
+  display: none; position: fixed; inset: 0; z-index: 80;
+  background: rgba(0,0,0,.85); padding: 24px; cursor: zoom-out;
+  align-items: center; justify-content: center;
+}
+.lightbox.open { display: flex; animation: modal-fade-in var(--dur-slow) var(--ease-out) both; }
+.lightbox img {
+  max-width: 100%; max-height: 100%; border-radius: 8px;
+  border: 1px solid var(--accent); animation: modal-pop var(--dur-slow) var(--ease-pop) both;
+}
+img.zoomable { cursor: zoom-in; transition: transform var(--dur) var(--ease-out); }
+img.zoomable:hover { transform: scale(1.02); }

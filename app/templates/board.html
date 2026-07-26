@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Plateau — {{ g.name }}{% endblock %}
+{% block heading %}🗺️ Plateau — {{ g.name }}{% endblock %}
+
+{% block content %}
+<div class="card">
+  <div class="row" style="align-items:center;flex-wrap:wrap;gap:10px">
+    <div class="small muted">Glisse les jetons sur le layout pour placer tes unités.
+      Clic sur un jeton de la palette pour l'ajouter.
+      <b>⤴</b> diviser une unité multi-figurines en deux jetons ·
+      <b>☠</b> marquer une unité détruite (elle reste sur le plateau, grisée) ·
+      <b>×</b> retirer le jeton. Positions sauvegardées.</div>
+    <div style="flex:1"></div>
+    {% if layout_battlemaster_url %}<a class="small" href="{{ layout_battlemaster_url }}" target="_blank">Battlemaster ↗</a>{% endif %}
+    <a class="btn small" href="{{ url_for('game.play', gid=g.id) }}">← Retour au plateau</a>
+  </div>
+
+  <div class="board-wrap board-large">
+    <div id="board" class="board{% if not layout_img %} board-noimg{% endif %}">
+      {% if layout_img %}
+        <img class="board-img" src="{{ layout_img }}" alt="Layout de terrain">
+      {% else %}
+        <div class="board-fallback">Layout indisponible — plateau neutre</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="board-palette" id="palette">
+    <div class="small muted">Unités à placer :</div>
+    <div id="palette-list"></div>
+  </div>
+</div>
+
+{# ---- Légende / joueurs ---- #}
+<div class="grid2">
+  {% for seat in [1,2] %}
+  <div class="card" style="margin:0;background:var(--panel-2)">
+    <span class="pill p{{ seat }}">Joueur {{ seat }} — {{ players[seat].name }}</span>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const GID = {{ g.id }};
+const UNITS = {{ units_json|tojson }};
+const TOKENS = {{ tokens_json|tojson }};
+</script>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+<script>
+Board.init();
+</script>
+{% endblock %}

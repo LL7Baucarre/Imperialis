@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+{% block title %}Mission — {{ g.name }}{% endblock %}
+{% block heading %}Choix de mission — {{ g.name }}{% endblock %}
+{% block content %}
+{% set fd1 = current.force_disposition_p1 %}
+<form method="post" action="{{ url_for('setup.mission', gid=g.id) }}" id="mission-form">
+<div class="grid2">
+  {% for seat in [1,2] %}
+  {% set fd = current['force_disposition_p'~seat] %}
+  {% set card = current['primary_card_p'~seat] %}
+  {% set deck_obj = decks | selectattr('name','equalto', fd) | first %}
+  <div class="card">
+    <h2><span class="pill p{{ seat }}">Joueur {{ seat }}</span> {{ players[seat].name }}</h2>
+    <label class="small">Force Disposition (= deck de mission primaire)</label>
+    <select name="force_disposition_p{{ seat }}" id="fd_{{ seat }}" class="fd-select" style="width:100%;padding:6px">
+      <option value="">— Choisir —</option>
+      {% for d in decks %}
+        <option value="{{ d.name }}" {{ 'selected' if fd==d.name else '' }}>{{ d.name }}</option>
+      {% endfor %}
+    </select>
+    <div class="small muted" style="margin-top:6px">{% if deck_obj %}{{ deck_obj.tagline }}{% endif %}</div>
+
+    {# Aperçu image de la force disposition #}
+    <div id="fdimg_{{ seat }}" class="mission-card small" style="margin-top:8px"></div>
+
+    <label class="small" style="margin-top:8px">Carte primaire (auto via matrix, surchargeable)</label>
+    <input type="text" name="primary_card_p{{ seat }}" id="card_{{ seat }}" value="{{ card or '' }}" placeholder="Auto-résolu via la matrix…" style="width:100%;padding:6px">
+    <button type="button" class="ghost small" onclick="Mission.resolve({{ seat }})">Auto-résoudre via matrix</button>
+
+    {# Aperçu image de la carte primaire #}
+    <div id="cardimg_{{ seat }}" class="mission-card small" style="margin-top:8px"></div>
+  </div>
+  {% endfor %}
+</div>
+
+<div class="grid2">
+  <div class="card">
+    <h2>Secondaire — Attaquant</h2>
+    <select name="secondary_attacker" id="sec_att" style="width:100%;padding:6px">
+      <option value="">— Aucune —</option>
+      {% for c in secondaries %}
+        <option value="{{ c.name }}" {{ 'selected' if current.secondary_attacker==c.name else '' }}>{{ c.name }}</option>
+      {% endfor %}
+    </select>
+    <div id="secimg_att" class="mission-card small" style="margin-top:8px"></div>
+  </div>
+  <div class="card">
+    <h2>Secondaire — Défenseur</h2>
+    <select name="secondary_defender" id="sec_def" style="width:100%;padding:6px">
+      <option value="">— Aucune —</option>
+      {% for c in secondaries %}
+        <option value="{{ c.name }}" {{ 'selected' if current.secondary_defender==c.name else '' }}>{{ c.name }}</option>
+      {% endfor %}
+    </select>
+    <div id="secimg_def" class="mission-card small" style="margin-top:8px"></div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>Layouts de terrain</h2>
+  <p class="small muted">Terrain recommandé (Battlemaster). Clique pour ouvrir le layout correspondant au deck.</p>
+  <div class="grid3">
+    {% for l in layouts %}
+    <div class="mission-card small">
+      <b>{{ l.deck }}</b><br>
+      {% if l.image_url %}<img class="zoomable" src="{{ l.image_url }}" alt="{{ l.deck }}" style="max-width:160px">{% endif %}
+      {% if l.battlemaster_url %}<a href="{{ l.battlemaster_url }}" target="_blank">Battlemaster ↗</a>{% endif %}
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<button class="primary" type="submit">Enregistrer &amp; continuer →</button>
+<a class="btn" href="{{ url_for('setup.setup_hub', gid=g.id) }}">← Retour</a>
+</form>
+
+{# Lightbox zoom cartes #}
+<div class="lightbox" id="lightbox" onclick="if(event.target===this)this.classList.remove('open')">
+  <img id="lightbox-img" alt="">
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const FD_IMAGES = {{ fd_images|tojson }};
+const PRIMARY_IMAGES = {{ primary_images|tojson }};
+const SECONDARY_IMAGES = {{ secondary_images|tojson }};
+
+const fdMap = Object.fromEntries(FD_IMAGES.map(x => [x.name, x.image_url]));
+const secMap = Object.fromEntries(SECONDARY_IMAGES.map(x => [x.name, x.image_url]));
+
+function imgOrNone(url, alt) {
+  return url ? `<img class="zoomable" src="${url}" alt="${alt || ''}" style="max-width:200px">` : `<span class="muted">— pas d'image —</span>`;
+}
+function refreshPreviews() {
+  for (const seat of [1, 2]) {
+    const fd = document.getElementById('fd_' + seat).value;
+    document.getElementById('fdimg_' + seat).innerHTML = fd ? imgOrNone(fdMap[fd], fd) : '';
+    const card = document.getElementById('card_' + seat).value;
+    const cards = (PRIMARY_IMAGES[fd] || []);
+    const ci = cards.find(c => c.name === card);
+    document.getElementById('cardimg_' + seat).innerHTML = ci ? imgOrNone(ci.image_url, card) : '';
+  }
+  const sa = document.getElementById('sec_att').value;
+  document.getElementById('secimg_att').innerHTML = sa ? imgOrNone(secMap[sa], sa) : '';
+  const sd = document.getElementById('sec_def').value;
+  document.getElementById('secimg_def').innerHTML = sd ? imgOrNone(secMap[sd], sd) : '';
+}
+
+const Mission = {
+  async resolve(seat) {
+    const a = document.getElementById('fd_1').value;
+    const b = document.getElementById('fd_2').value;
+    if (!a || !b) { alert('Choisis les deux dispositions de force.'); return; }
+    const your = seat === 1 ? a : b;
+    const opp  = seat === 1 ? b : a;
+    const r = await fetch('/api/mission/resolve-matrix', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({your_deck: your, opp_deck: opp})
+    }).then(r=>r.json());
+    if (r.card) { document.getElementById('card_'+seat).value = r.card; refreshPreviews(); }
+    else alert('Aucune carte trouvée dans la matrix pour ce matchup.');
+  }
+};
+document.querySelectorAll('.fd-select').forEach(s => s.addEventListener('change', () => {
+  if (document.getElementById('fd_1').value && document.getElementById('fd_2').value) {
+    Mission.resolve(1); Mission.resolve(2);
+  }
+  refreshPreviews();
+}));
+['card_1','card_2','sec_att','sec_def'].forEach(id =>
+  document.getElementById(id).addEventListener('change', refreshPreviews));
+
+refreshPreviews();
+
+// Zoom au clic sur les images de cartes
+document.addEventListener('click', (e) => {
+  const img = e.target.closest('img.zoomable');
+  if (!img) return;
+  document.getElementById('lightbox-img').src = img.src;
+  document.getElementById('lightbox-img').alt = img.alt || '';
+  document.getElementById('lightbox').classList.add('open');
+});
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') document.getElementById('lightbox').classList.remove('open'); });
+</script>
+{% endblock %}

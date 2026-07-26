@@ -1,0 +1,83 @@
+{# Macros réutilisables #}
+
+{# Barre de phases #}
+{% macro phase_bar(current) %}
+<div class="phasebar">
+  {% for p in PHASES %}
+    <span class="step {{ 'cur' if p==current else ('done' if loop.index < PHASES.index(current)+1 else '') }}">{{ p }}</span>
+  {% endfor %}
+</div>
+{% endmacro %}
+
+{# Tableau de statline #}
+{% macro statline(stats) %}
+{% if stats %}
+<table class="stats">
+  <tr>{% for k in ['M','T','Sv','W','LD','OC','InSv'] %}<th>{{ k }}</th>{% endfor %}</tr>
+  <tr>
+    {% for k in ['M','T','Sv','W','LD','OC','InSv'] %}
+      <td>{{ stats.get(k) or '—' }}</td>
+    {% endfor %}
+  </tr>
+</table>
+{% endif %}
+{% endmacro %}
+
+{# Carte d'unité (panneau latéral) #}
+{% macro unit_panel(u, seat) %}
+<div class="unit {{ 'shocked' if u.battle_shocked else '' }}" data-unit-id="{{ u.id }}" data-seat="{{ seat }}">
+  <div class="uname">
+    <span class="pill p{{ seat }}">{{ 'J'~seat }}</span>
+    {{ u.custom_name or u.name }}
+    {% if u.battle_shocked %} <span class="pill" style="background:#7f1d1d;color:#fee2e2">Shock</span>{% endif %}
+    {% if u.half_strength %} <span class="half">DEMI-EFFECTIF</span>{% endif %}
+  </div>
+  <div class="meta">
+    {{ u.models_current }}/{{ u.models_total }} modèles · {{ u.points }} pts
+    <button class="ghost small" onclick="UnitModal.open({{ u.id }})">détails</button>
+  </div>
+  <div class="small unit-ctrls" style="margin-top:4px; display:flex; gap:10px; flex-wrap:wrap; align-items:center">
+    <label class="small">Shock
+      <input type="checkbox" class="shock-toggle" data-unit="{{ u.id }}" {{ 'checked' if u.battle_shocked else '' }}>
+    </label>
+    <label class="small">Modèles:
+      <input type="number" min="0" max="{{ u.models_total }}" value="{{ u.models_current }}" class="models-input" data-unit="{{ u.id }}" style="width:48px">
+    </label>
+    {% if u.wounds_total %}
+    <span class="small">PV:
+      <button class="ghost small" onclick="Game.adjWounds({{ u.id }},-1)">−</button>
+      <span id="wounds_{{ u.id }}" class="wounds-val">{{ u.wounds_current }}/{{ u.wounds_total }}</span>
+      <button class="ghost small" onclick="Game.adjWounds({{ u.id }},+1)">+</button>
+    </span>
+    {% endif %}
+  </div>
+</div>
+{% endmacro %}
+
+{# Texte structuré d'une carte de mission (primary/secondary) #}
+{% macro card_text(text) %}
+{% if text %}
+<div class="cardtext">
+  {% if text.kindLabel %}<div class="small muted">{{ text.kindLabel }}</div>{% endif %}
+  {% if text.rule %}<div class="small" style="margin-bottom:4px">{{ text.rule|safe }}</div>{% endif %}
+  {% for sec in text.sections %}
+  <div class="ct-section">
+    <div class="ct-when">{{ sec.when|safe }}{% if sec.chip %} <span class="pill" style="font-size:.7rem">{{ sec.chip }}</span>{% endif %}</div>
+    {% if sec.trigger %}<div class="small muted">⤷ {{ sec.trigger|safe }}</div>{% endif %}
+    <ul class="ct-rows">
+      {% for r in sec.rows %}
+      <li>
+        <span class="ct-text">{{ r.text|safe }}</span>
+        {% if r.vp is not none %}<span class="ct-vp">{{ r.vp }} VP</span>{% endif %}
+        {% if r.perUnit %}<span class="ct-flag">/mod.</span>{% endif %}
+        {% if r.cumulative %}<span class="ct-flag">cumulatif</span>{% endif %}
+        {% if r.plus %}<span class="ct-flag">+</span>{% endif %}
+        {% if r.or %}<span class="ct-flag">OU</span>{% endif %}
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+{% endmacro %}

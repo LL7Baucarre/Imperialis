@@ -1,0 +1,48 @@
+<div>
+  <div class="row" style="align-items:center">
+    <h2 style="flex:1">{{ u.custom_name or u.name }}</h2>
+    <button class="ghost" onclick="UnitModal.close()">✕</button>
+  </div>
+  <div class="small muted">{{ (u.keywords or []) | join(', ') }}</div>
+
+  {% set s = u.stats %}
+  {% if s %}
+  <table class="stats" style="margin-top:8px">
+    <tr>{% for k in ['M','T','Sv','W','LD','OC','InSv'] %}<th>{{ k }}</th>{% endfor %}</tr>
+    <tr>{% for k in ['M','T','Sv','W','LD','OC','InSv'] %}<td>{{ s.get(k) or '—' }}</td>{% endfor %}</tr>
+  </table>
+  {% endif %}
+
+  <p class="small">Modèles : {{ u.models_current }}/{{ u.models_total }} · {{ u.points }} pts
+    {% if u.half_strength %} · <span class="half">DEMI-EFFECTIF</span>{% endif %}
+    {% if u.battle_shocked %} · <span class="pill" style="background:#7f1d1d">SHOCK</span>{% endif %}
+  </p>
+
+  <h3>Capacités</h3>
+  <ul class="abil">
+  {% for a in u.abilities %}
+    <li><b>{{ a.name }}</b> — <span class="small">{{ a.description | bsd }}</span></li>
+  {% else %}
+    <li class="muted small">Aucune.</li>
+  {% endfor %}
+  </ul>
+
+  <h3>Armes</h3>
+  <table class="stats weapons">
+    <tr><th>Nom</th><th>Portée</th><th>A</th><th>BS/WS</th><th>S</th><th>AP</th><th>D</th><th>Capacités</th></tr>
+    {% for w in u.weapons %}
+    <tr>
+      <td>{{ w.name }} <div class="small muted">{{ w.type }}</div></td>
+      <td>{{ w.range or '—' }}</td>
+      <td>{{ w.A or '—' }}</td>
+      <td>{{ w.BS or w.WS or '—' }}</td>
+      <td>{{ w.S or '—' }}</td>
+      <td>{{ w.AP or '—' }}</td>
+      <td>{{ w.D or '—' }}</td>
+      <td class="small">{{ (w.abilities or '')|bsd }}</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="8" class="muted small">Aucune.</td></tr>
+    {% endfor %}
+  </table>
+</div>

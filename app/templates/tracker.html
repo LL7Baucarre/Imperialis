@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Tracker VP — {{ g.name }}{% endblock %}
+{% block heading %}Tracker VP — {{ g.name }}{% endblock %}
+{% block content %}
+<div class="card">
+  <h2>Victory Points par round</h2>
+  <table class="tracker">
+    <tr>
+      <th>Round</th>
+      <th><span class="pill p1">J1 — {{ players[1].name }}</span></th>
+      <th><span class="pill p2">J2 — {{ players[2].name }}</span></th>
+    </tr>
+    {% for r in range(1, g.round + 1) %}
+    <tr>
+      <td><b>R{{ r }}</b></td>
+      <td>
+        {% if grid[r][1] %}
+          {{ grid[r][1].vp_total_after }} <span class="small muted">(+{{ grid[r][1].delta }})</span>
+        {% else %}—{% endif %}
+      </td>
+      <td>
+        {% if grid[r][2] %}
+          {{ grid[r][2].vp_total_after }} <span class="small muted">(+{{ grid[r][2].delta }})</span>
+        {% else %}—{% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+    <tr style="background:var(--panel-2)">
+      <td><b>TOTAL</b></td>
+      <td><b style="color:var(--accent)">{{ players[1].vp_total }}</b></td>
+      <td><b style="color:var(--accent)">{{ players[2].vp_total }}</b></td>
+    </tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>Historique détaillé</h2>
+  <table class="tracker">
+    <tr><th>Round</th><th>Joueur</th><th>ΔVP</th><th>Total après</th><th>Raison</th><th>Quand</th></tr>
+    {% for v in vp_hist %}
+    <tr>
+      <td>R{{ v.round }}</td>
+      <td>
+        {% for s in [1,2] if players[s].id == v.player_id %}<span class="pill p{{ s }}">J{{ s }}</span>{% endfor %}
+      </td>
+      <td>{{ '+' if v.delta>=0 else '' }}{{ v.delta }}</td>
+      <td>{{ v.vp_total_after }}</td>
+      <td class="small muted">{{ v.reason or '' }}</td>
+      <td class="small muted">{{ v.created_at }}</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="6" class="muted small">Aucun VP enregistré.</td></tr>
+    {% endfor %}
+  </table>
+</div>
+<a class="btn" href="{{ url_for('game.play', gid=g.id) }}">← Retour au plateau</a>
+{% endblock %}

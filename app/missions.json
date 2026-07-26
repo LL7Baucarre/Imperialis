@@ -1,0 +1,1799 @@
+{
+  "primary_decks": [
+    {
+      "name": "Take and Hold",
+      "slug": "take-and-hold",
+      "tagline": "Hold the most objective markers across the battlefield.",
+      "cards": [
+        {
+          "name": "Battlefield Dominance",
+          "slug": "battlefield-dominance",
+          "number": 1,
+          "image": "primary-missions/take-and-hold/battlefield-dominance.png",
+          "text": {
+            "name": "Battlefield Dominance",
+            "sections": [
+              {
+                "when": "FIRST &amp; SECOND BATTLE ROUND",
+                "trigger": "End of your turn",
+                "rows": [
+                  {
+                    "text": "You control more <b>objectives than your opponent.",
+                    "vp": 2
+                  }
+                ]
+              },
+              {
+                "when": "SECOND BATTLE ROUND ONWARDS",
+                "trigger": "End of your Command phase (or the end of your turn in the fifth battle round)",
+                "rows": [
+                  {
+                    "text": "For each <b>objective you control.",
+                    "vp": 3,
+                    "perUnit": true
+                  },
+                  {
+                    "text": "For each of those <b>objectives (excluding your <b>home objective) if you control your <b>home objective.",
+                    "vp": 2,
+                    "perUnit": true,
+                    "cumulative": true
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "Determined Acquisition",
+          "slug": "determined-acquisition",
+          "number": 2,
+          "image": "primary-missions/take-and-hold/determined-acquisition.png",
+          "text": {
+            "name": "Determined Acquisition",
+            "sections": [
+              {
+                "when": "ANY BATTLE ROUND",
+                "trigger": "End of your turn",
+                "rows": [
+                  {
+                    "text": "For each <b>objective you control that you did not control at the start of the turn (excluding your <b>home objective).",
+                    "vp": 2,
+                    "perUnit": true
+                  }
+                ]
+              },
+              {
+                "when": "SECOND BATTLE ROUND ONWARDS",
+                "trigger": "End of your Command phase (or the end of your turn in the fifth battle round)",
+                "rows": [
+                  {
+                    "text": "For each <b>objective you control.",
+                    "vp": 3,
+                    "perUnit": true
+                  },
+                  {
+                    "text": "For each of those <b>objectives that is within your opponent's territory.",
+                    "vp": 3,
+                    "perUnit": true,
+                    "cumulative": true
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "Immovable Object",
+          "slug": "immovable-object",
+          "number": 3,
+          "image": "primary-missions/take-and-hold/immovable-object.png",
+          "text": {
+            "name": "Immovable Object",
+            "sections": [
+              {
+                "when": "ANY BATTLE ROUND",
+                "trigger": "End of your turn",
+                "rows": [
+                  {
+                    "text": "You control one or more <b>central objectives.",
+                    "vp": 3
+                  }
+                ]
+              },
+              {
+                "when": "SECOND TO FOURTH BATTLE ROUND",
+                "trigger": "End of your Command phase",
+                "rows": [
+                  {
+                    "text": "For each <b>objective you control (excluding your <b>home objective).",
+                    "vp": 5,
+                    "perUnit": true
+                  }
+                ]
+              },
+              {
+                "when": "FIFTH BATTLE ROUND",
+                "trigger": "End of your turn",
+                "rows": [
+                  {
+                    "text": "For each <b>objective you control (excluding your <b>home objective).",
+                    "vp": 5,
+                    "perUnit": true
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "Inescapable Dominion",
+          "slug": "inescapable-dominion",
+          "number": 4,
+          "image": "primary-missions/take-and-hold/inescapable-dominion.png",
+          "text": {
+            "name": "Inescapable Dominion",
+            "sections": [
+              {
+                "when": "ANY BATTLE ROUND",
+                "trigger": "End of your turn",
+                "rows": [
+                  {
+                    "text": "You control three or more <b>objectives.",
+                    "vp": 4
+                  }
+                ]
+              },
+              {
+                "when": "SECOND BATTLE ROUND ONWARDS",
+                "trigger": "End of your Command phase (or the end of your turn in the fifth battle round)",
+                "rows": [
+                  {
+                    "text": "You control two or more <b>objectives.",
+                    "vp": 5
+                  },
+                  {
+                    "text": "You control more <b>objectives than your opponent.",
+                    "vp": 4
+                  }
+                ]
+              },
+              {
+                "when": "END OF BATTLE",
+                "rows": [
+                  {
+                    "text": "You control your opponent's <b>home objective.",
+                    "vp": 5,
+                    "kind": "eob"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "Purge and Secure",
+          "slug": "purge-and-secure",
+          "number": 5,
+          "image": "primary-missions/take-and-hold/purge-and-secure.png",
+          "text": {
+            "name": "Purge and Secure",
+            "sections": [
+              {
+                "when": "ANY BATTLE ROUND",
+                "trigger": "End of your turn",
+                "rows": [
+                  {
+                    "text": "One or more enemy units were <b>destroyed this turn by a friendly unit that was within range of one or more <b>objectives.",
+                    "vp": 3
+                  },
+                  {
+                    "text": "One or more enemy units that started the turn within range of one or more <b>objectives were <b>destroyed this turn.",
+                    "vp": 3,
+                    "or": true
+                  }
+                ]
+              },
+              {
+                "when": "SECOND BATTLE ROUND ONWARDS",
+                "trigger": "End of your Command phase (or the end of your turn in the fifth battle round)",
+                "rows": [
+                  {
+                    "text": "For each <b>objective you control (excluding your <b>home objective).",
+                    "vp": 4,
+                    "perUnit": true
+                  }
+                ]
+              },
+              {
+                "when": "SECOND BATTLE ROUND ONWARDS",
+                "trigger": "End of your turn",
+                "rows": [
+                  {
+                    "text": "You control one or more <b>objectives you did not control at the start of the turn (excluding your <b>home objective).",
+                    "vp": 3
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Purge the Foe",
+      "slug": "purge-the-foe",
+      "tagline": "Destroy the enemy and dominate the battlefield through force.",
+      "cards": [
+        {
+          "name": "Consecrate",
+          "slug": "consecrate",
+          "number": 1,
+          "image": "primary-missions/purge-the-foe/consecrate.png",
+          "text": {
+            "name": "Consecrate",
+            "sections": [
+              {
+                "when": "ANY BATTLE ROUND",
+                "trigger": "End of your turn",
+                "rows": [
+                  {
+                    "text": "One or two <b>objectives are <b>consecrated.",
+                    "vp": 3
+                  },
+                  {
+                    "text": "Three or more <b>objectives are <b>consecrated.",
+                    "vp": 6,
+                    "or": true
+                  }
+                ]
+              },
+              {
+                "when": "SECOND BATTLE ROUND ONWARDS",
+                "trigger": "End of your Command phase (or the end of your turn in the fifth battle round)",
+                "rows": [
+                  {
+                    "text": "You control one or more <b>objectives (excluding your <b>home objective).",
+                    "vp": 4
+                  },
+                  {
+                    "text": "You control more <b>objectives than your opponent.",
+                    "vp": 4
+                  }
+                ]
+              },
+              {
+                "when": "END OF BATTLE",
+                "rows": [
+                  {
+                    "text": "Your opponent's <b>home objective is <b>consecrated.",
+                    "vp": 5,
+                    "kind": "eob"
+                  }
+                ]
+              }
+            ],
+            "rule": "Each time a friendly unit <b>destroys a unit, that friendly unit becomes a <b>consecration unit. At the end of your turn, for each of your <b>consecration units, you can select one <b>objective it is within range of (excluding your <b>home objective) that has not been <b>consecrated. If you do, place one of your operation markers within range of that <b>objective – that <b>objective is <b>consecrated and that unit is no longer a <b>consecration unit."
+          }
+        },
+        {
+          "name": "Destroyer's Wrath",
+          "slug": "destroyers-wrath",
+          "number": 2,
+          "image": "primary-missions/purge-the-foe/destroyers-wrath.png",
+          "text": {
+            "name": "Destroyer's Wrath",
+            "sections": [
+              {
+                "when": "ANY BATTLE ROUND",
+                "trigger": "End of your turn",
+                "rows": [
+                  {
+                    "text": "One or more enemy units were <b>destroyed this turn.",
+                    "vp": 3
+                  }
+                ]
+              },
+              {
+                "when": "SECOND BATTLE ROUND ONWARDS",
+                "trigger": "End of your Command phase (or the end of your turn in the fifth battle round)",
+                "rows": [
+                  {
+                    "text": "You control one or more <b>objectives (excluding your <b>home objective).",
+                    "vp": 4
+                  },
+                  {
+                    "text": "You control more <b>objectives than your opponent.",
+                    "vp": 6
+                  }
+                ]
+              },
+              {
+                "when": "SECOND BATTLE ROUND ONWARDS",
+                "trigger": "End of your turn",
+                "rows": [
+                  {
+                    "text": "More enemy units were <b>destroyed this turn than friendly units were <b>destroyed in the previous turn.",
+                    "vp": 4
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "Meatgrinder",
+          "slug": "meatgrinder",
+          "number": 3,
+          "image": "primary-missions/purge-the-foe/meatgrinder.png",
+          "text": {
+            "name": "Meatgrinder",
+            "sections": [
+              {
+                "when": "ANY BATTLE ROUND",
+                "trigger": "End of your turn",
+                "rows": [
+                  {
+                    "text": "One or more enemy units were <b>destroyed this turn.",
+                    "vp": 3
+                  }
+                ]
+              },
+              {
+                "when": "SECOND BATTLE ROUND ONWARDS",
+                "trigger": "End of your Command phase (or the end of your turn in the fifth battle round)",
+                "rows": [
+                  {
+                    "text": "You control one or more <b>objectives (excluding your <b>home objective).",
+                    "vp": 4
+                  }
+                ]
+              },
+              {
+                "when": "SECOND BATTLE ROUND ONWARDS",
+                "trigger": "End of your turn",
+                "rows": [
+                  {
+                    "text": "More enemy units were <b>destroyed this turn than friendly units were <b>destroyed in the previous turn.",
+                    "vp": 5
+                  },
+                  {
+                    "text": "You control your opponent's <b>home objective.",
+                    "vp": 5
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "Punishment",
+          "slug": "punishment",
+          "number": 4,
+          "image": "primary-missions/purge-the-foe/punishment.png",
+          "text": {
+            "name": "Punishment",
+            "sections": [
+              {
+                "when": "ANY BATTLE ROUND",
+                "trigger": "End of a turn",
+                "rows": [
+                  {
+                    "text": "One or more <b>condemned enemy units left the battlefield this turn.",
+                    "vp": 5
+                  }
+                ]
+              },
+              {
+                "when": "SECOND BATTLE ROUND ONWARDS",
+                "trigger": "End of your Command phase (or the end of your turn in the fifth battle round)",
+                "rows": [
+                  {
+                    "text": "You control one or more <b>objectives (excluding your home <b>objective).",
+                    "vp": 4
+                  },
+                  {
+                    "text": "You control more <b>objectives than your opponent.",
+                    "vp": 5
+                  }
+                ]
+              },
+              {
+                "when": "END OF BATTLE",
+                "rows": [
+                  {
+                    "text": "You control your opponent's <b>home objective.",
+                    "vp": 8,
+                    "kind": "eob"
+                  }
+                ]
+              }
+            ],
+            "rule": "<b>START OF YOUR TURN: Select one to three enemy units that are on the battlefield and within range of <b>objectives and/or that <b>destroyed one or more friendly units in the previous turn. If you cannot, select one enemy unit that is on the battlefield. Until the start of your next turn, those units are <b>condemned."
+          }
+        },
+        {
+          "name": "Unstoppable Force",
+          "slug": "unstoppable-force",
+          "number": 5,
+          "image": "primary-missions/purge-the-foe/unstoppable-force.png",
+          "text": {
+            "name": "Unstoppable Force",
+            "sections": [
+              {
+                "when": "ANY BATTLE ROUND",
+                "trigger": "End of your turn",
+                "rows": [
+                  {
+                    "text": "One or more enemy units were <b>destroyed this turn.",
+                    "vp": 3
+                  }
+                ]
+              },
+              {
+                "when": "SECOND BATTLE ROUND ONWARDS",
+                "trigger": "End of your Command phase (or the end of your turn in the fifth battle round)",
+                "rows": [
+                  {
+                    "text": "For each <b>objective you control (excluding your <b>home objective).",
+                    "vp": 4,
+                    "perUnit": true
+                  }
+                ]
+              },
+              {
+                "when": "SECOND BATTLE ROUND ONWARDS",
+                "trigger": "End of your turn",
+                "rows": [
+                  {
+                    "text": "You control one or more <b>objectives you did not control at the start of the turn (excluding your <b>home objective).",
+                    "vp": 3
+                  }
+                ]
+              },
+              {
+                "when": "END OF BATTLE",
+                "rows": [
+                  {
+                    "text": "You control one or more <b>central objectives.",
+                    "vp": 5,
+                    "kind": "eob"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Disruption",
+      "slug": "disruption",
+      "tagline": "Disrupt the enemy battle plan and deny them the field.",
+      "cards": [
+        {
+          "name": "Death Trap",
+          "slug": "death-trap",
+          "number": 1,
+          "image": "primary-missions/disruption/death-trap.png",
+          "text": {
+            "name": "Death Trap",
+            "sections": [
+              {
+                "when": "ANY BATTLE ROUND",
+                "trigger": "End of your turn",
+                "rows": [
+                  {
+                    "text": "For each <b>terrain area trapped this turn.",
+                    "vp": 2,
+                    "perUnit": true
+                  },
+                  {
+                    "text": "For each of those <b>terrain areas that is an <b>objective.",
+                    "vp": 3,
+                    "perUnit": true,
+                    "cumulative": true
+                  }
+                ]
+              },
+              {
+                "when": "ANY BATTLE ROUND",
+                "trigger": "End of your turn",
+                "rows": [
+                  {
+                    "text": "One or more enemy units that started the turn within a terrain area were destroyed, if that terrain area is <b>trapped.",
+                    "vp": 3
+                  }
+                ]
+              },
+              {
+                "when": "SECOND BATTLE ROUND ONWARDS",
+                "trigger": "End of your Command phase (or the end of your turn in the fifth battle round)",
+                "rows": [
+                  {
+                    "text": "You control one or more <b>objectives (excluding your <b>home objective).",
+                    "vp": 4
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "Delaying Action",
+          "slug": "delaying-action",
+          "number": 2,
+          "image": "primary-missions/disruption/delaying-action.png",
+          "text": {
+            "name": "Delaying Action",
+            "sections": [
+              {
+                "when": "ANY BATTLE ROUND",
+                "trigger": "End of your turn",
+                "rows": [
+                  {
+                    "text": "For each enemy unit <b>destroyed this turn.",
+                    "vp": 2,
+                    "perUnit": true
+                  }
+                ]
+              },
+              {
+                "when": "SECOND BATTLE ROUND ONWARDS",
+                "trigger": "End of your Command phase (or the end of your turn in the fifth battle round)",
+                "rows": [
+                  {
+                    "text": "You control one or more <b>objectives (excluding <b>home objectives).",
+                    "vp": 4
+                  }
+                ]
+              },
+              {
+                "when": "SECOND BATTLE ROUND ONWARDS",
+                "trigger": "End of your turn",
+                "rows": [
+                  {
+                    "text": "You control one or more <b>central objectives and one or more <b>expansion objectives.",
+                    "vp": 3
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "Locate and Deny",
+          "slug": "locate-and-deny",
+          "number": 3,
+          "image": "primary-missions/disruption/locate-and-deny.png",
+          "text": {
+            "name": "Locate and Deny",
+            "sections": [
+              {
+                "when": "ANY BATTLE ROUND",
+                "trigger": "End of your turn",
+                "rows": [
+                  {
+                    "text": "One or more enemy units that started the turn within range of one or more <b>objectives are <b>destroyed.",
+                    "vp": 4
+                  },
+                  {
+                    "text": "Only one of your <b>operation markers is on the battlefield, if one or more of your units are within the same <b>terrain area as that <b>marker, and no enemy units are within that <b>terrain area.",
+                    "vp": 4
+                  }
+                ]
+              },
+              {
+                "when": "SECOND BATTLE ROUND ONWARDS",
+                "trigger": "End of your Command phase (or the end of your turn in the fifth battle round)",
+                "rows": [
+                  {
+                    "text": "You control one or more <b>objectives (excluding your <b>home objective).",
+                    "vp": 4
+                  }
+                ]
+              },
+              {
+                "when": "END OF BATTLE",
+                "rows": [
+                  {
+                    "text": "Only one of your <b>operation markers is on the battlefield, if one or more of your units are within the same <b>terrain area as that <b>marker, and no enemy units are within that <b>terrain area.",
+                    "vp": 5,
+                    "kind": "eob"
+                  }
+                ]
+              }
+            ],
+            "rule": "<b>START OF THE BATTLE: Select five <b>terrain areas not within your deployment zone; for each one, place one of your <b>operation markers within it. If you cannot, do so for each <b>terrain area that is not within your deployment zone."
+          }
+        },
+        {
+          "name": "Outmanoeuvre",
+          "slug": "outmanoeuvre",
+          "number": 4,
+          "image": "primary-missions/disruption/outmanoeuvre.png",
+          "text": {
+            "name": "Outmanoeuvre",
+            "sections": [
+              {
+                "when": "ANY BATTLE ROUND",
+                "trigger": "End of your turn",
+                "rows": [
+                  {
+                    "text": "You control your opponent's <b>home objective.",
+                    "vp": 10
+                  }
+                ]
+              },
+              {
+                "when": "FIRST BATTLE ROUND",
+                "trigger": "End of your turn",
+                "rows": [
+                  {
+                    "text": "For each <b>objective you control (excluding your <b>home objective).",
+                    "vp": 4,
+                    "perUnit": true
+                  }
+                ]
+              },
+              {
+                "when": "SECOND &amp; THIRD BATTLE ROUND",
+                "trigger": "End of your Command phase",
+                "rows": [
+                  {
+                    "text": "For each <b>objective you control (excluding your <b>home objective).",
+                    "vp": 5,
+                    "perUnit": true
+                  }
+                ]
+              },
+              {
+                "when": "FOURTH BATTLE ROUND ONWARDS",
+                "trigger": "End of your turn",
+                "rows": [
+                  {
+                    "text": "For each <b>objective you control (excluding your <b>home objective).",
+                    "vp": 6,
+                    "perUnit": true
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "Smoke and Mirrors",
+          "slug": "smoke-and-mirrors",
+          "number": 5,
+          "image": "primary-missions/disruption/smoke-and-mirrors.png",
+          "text": {
+            "name": "Smoke and Mirrors",
+            "sections": [
+              {
+                "when": "ANY BATTLE ROUND",
+                "trigger": "End of your turn",
+                "rows": [
+                  {
+                    "text": "For each <b>objective that is <b>decoyed (see reverse).",
+                    "vp": 2,
+                    "perUnit": true
+                  },
+                  {
+                    "text": "For each of those <b>objectives that is within your opponent's territory.",
+                    "vp": 2,
+                    "perUnit": true,
+                    "cumulative": true
+                  }
+                ]
+              },
+              {
+                "when": "SECOND BATTLE ROUND ONWARDS",
+                "trigger": "End of your Command phase (or the end of your turn in the fifth battle round)",
+                "rows": [
+                  {
+                    "text": "You control one or more <b>objectives (excluding your <b>home objective).",
+                    "vp": 4
+                  }
+                ]
+              },
+              {
+                "when": "END OF BATTLE",
+                "rows": [
+                  {
+                    "text": "<b>Four or more objectives are <b>decoyed.",
+                    "vp": 10,
+                    "kind": "eob"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reconnaissance",
+      "slug": "reconnaissance",
+      "tagline": "Scout the battlefield and seize key intelligence positions.",
+      "cards": [
+        {
+          "name": "Gather Intel",
+          "slug": "gather-intel",
+          "number": 1,
+          "image": "primary-missions/reconnaissance/gather-intel.png",
+          "text": {
+            "name": "Gather Intel",
+            "sections": [
+              {
+                "when": "FIRST BATTLE ROUND",
+                "trigger": "End of your turn",
+                "rows": [
+                  {
+                    "text": "You control one or more <b>central objectives.",
+                    "vp": 6
+                  }
+                ]
+              },
+              {
+                "when": "SECOND BATTLE ROUND ONWARDS",
+                "trigger": "End of your Command phase (or the end of your turn in the fifth battle round)",
+                "rows": [
+                  {
+                    "text": "You control one or more <b>objectives (excluding your <b>home objective).",
+                    "vp": 4
+                  }
+                ]
+              },
+              {
+                "when": "SECOND BATTLE ROUND ONWARDS",
+                "trigger": "End of your turn",
+                "rows": [
+                  {
+                    "text": "For each friendly unit that completed the <b>Extract Intelligence action this turn.",
+                    "vp": 7,
+                    "perUnit": true
+                  }
+                ]
+              },
+              {
+                "when": "END OF BATTLE",
+                "rows": [
+                  {
+                    "text": "Three or more of your <b>operation markers are on the battlefield.",
+                    "vp": 5,
+                    "kind": "eob"
+                  },
+                  {
+                    "text": "One of your <b>operation markers is within range of your opponent's <b>home objective.",
+                    "vp": 5,
+                    "kind": "eob"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "Reconnaissance Sweep",
+          "slug": "reconnaissance-sweep",
+          "number": 2,
+          "image": "primary-missions/reconnaissance/reconnaissance-sweep.png",
+          "text": {
+            "name": "Reconnaissance Sweep",
+            "sections": [
+              {
+                "when": "ANY BATTLE ROUND",
+                "trigger": "End of your turn",
+                "rows": [
+                  {
+                    "text": "Three or more friendly units are wholly within three different table quarters and not within 6\" of the centre of the battlefield.",
+                    "vp": 3
+                  },
+                  {
+                    "text": "Four or more friendly units are wholly within four different table quarters and not within 6\" of the centre of the battlefield.",
+                    "vp": 6,
+                    "or": true
+                  }
+                ]
+              },
+              {
+                "when": "ANY BATTLE ROUND",
+                "trigger": "End of your turn",
+                "rows": [
+                  {
+                    "text": "For each enemy unit <b>destroyed this turn.",
+                    "vp": 1,
+                    "perUnit": true
+                  }
+                ]
+              },
+              {
+                "when": "SECOND BATTLE ROUND ONWARDS",
+                "trigger": "End of your Command phase (or the end of your turn in the fifth battle round)",
+                "rows": [
+                  {
+                    "text": "You control one or more <b>objectives (excluding your <b>home objective).",
+                    "vp": 3
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "Search and Scour",
+          "slug": "search-and-scour",
+          "number": 3,
+          "image": "primary-missions/reconnaissance/search-and-scour.png",
+          "text": {
+            "name": "Search and Scour",
+            "sections": [
+              {
+                "when": "ANY BATTLE ROUND",
+                "trigger": "End of your turn",
+                "rows": [
+                  {
+                    "text": "You control one or more <b>central objectives.",
+                    "vp": 3
+                  },
+                  {
+                    "text": "One or more enemy units that started the turn within a <b>terrain area are <b>destroyed.",
+                    "vp": 2
+                  }
+                ]
+              },
+              {
+                "when": "SECOND BATTLE ROUND ONWARDS",
+                "trigger": "End of your Command phase (or the end of your turn in the fifth battle round)",
+                "rows": [
+                  {
+                    "text": "For each <b>objective you control (excluding your <b>home objective).",
+                    "vp": 4,
+                    "perUnit": true
+                  }
+                ]
+              },
+              {
+                "when": "END OF BATTLE",
+                "rows": [
+                  {
+                    "text": "No enemy units are wholly within your territory.",
+                    "vp": 5,
+                    "kind": "eob"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "Surveil the Foe",
+          "slug": "surveil-the-foe",
+          "number": 4,
+          "image": "primary-missions/reconnaissance/surveil-the-foe.png",
+          "text": {
+            "name": "Surveil the Foe",
+            "sections": [
+              {
+                "when": "ANY BATTLE ROUND",
+                "trigger": "End of your turn",
+                "rows": [
+                  {
+                    "text": "One or more enemy units were <b>surveilled this turn (see reverse), unless each of those units is within range of one or more <b>objectives that have one or more <b>operation markers within range of them.",
+                    "vp": 4
+                  }
+                ]
+              },
+              {
+                "when": "SECOND BATTLE ROUND ONWARDS",
+                "trigger": "End of your Command phase (or the end of your turn in the fifth battle round)",
+                "rows": [
+                  {
+                    "text": "You control one or more <b>objectives (excluding your <b>home objective).",
+                    "vp": 4
+                  },
+                  {
+                    "text": "You control more <b>objectives than your opponent.",
+                    "vp": 4
+                  }
+                ]
+              },
+              {
+                "when": "SECOND BATTLE ROUND ONWARDS",
+                "trigger": "End of your turn",
+                "rows": [
+                  {
+                    "text": "None of your opponent's <b>operation markers are on the battlefield.",
+                    "vp": 5
+                  }
+                ]
+              }
+            ],
+            "rule": "Each time a friendly unit ends a move within range of one <b>objective that has any of your <b>opponent's operation markers within range of it, remove those <b>operation markers from the battlefield."
+          }
+        },
+        {
+          "name": "Triangulation",
+          "slug": "triangulation",
+          "number": 5,
+          "image": "primary-missions/reconnaissance/triangulation.png",
+          "text": {
+            "name": "Triangulation",
+            "sections": [
+              {
+                "when": "SECOND BATTLE ROUND ONWARDS",
+                "trigger": "End of your Command phase (or the end of your turn in the fifth battle round)",
+                "rows": [
+                  {
+                    "text": "You control one or more <b>objectives (excluding your <b>home objective).",
+                    "vp": 4
+                  }
+                ]
+              },
+              {
+                "when": "SECOND BATTLE ROUND ONWARDS",
+                "trigger": "End of your turn",
+                "rows": [
+                  {
+                    "text": "One <b>objective is <b>triangulated (see reverse).",
+                    "vp": 3
+                  },
+                  {
+                    "text": "Two <b>objectives are <b>triangulated.",
+                    "vp": 6,
+                    "or": true
+                  },
+                  {
+                    "text": "Three or more <b>objectives are <b>triangulated.",
+                    "vp": 10,
+                    "or": true
+                  }
+                ]
+              },
+              {
+                "when": "END OF BATTLE",
+                "rows": [
+                  {
+                    "text": "You control four or more <b>objectives.",
+                    "vp": 10,
+                    "kind": "eob"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Priority Assets",
+      "slug": "priority-assets",
+      "tagline": "Capture and hold the high value assets scattered across the field.",
+      "cards": [
+        {
+          "name": "Extract Relic",
+          "slug": "extract-relic",
+          "number": 1,
+          "image": "primary-missions/priority-assets/extract-relic.png",
+          "text": {
+            "name": "Extract Relic",
+            "sections": [
+              {
+                "when": "ANY BATTLE ROUND",
+                "trigger": "End of your turn",
+                "rows": [
+                  {
+                    "text": "A friendly unit <b>performed a sensor sweep this turn.",
+                    "vp": 4
+                  },
+                  {
+                    "text": "One or more enemy units that started the turn within range of one or more <b>objectives are <b>destroyed.",
+                    "vp": 3
+                  },
+                  {
+                    "text": "Only one of your opponent's <b>operation markers is on the battlefield, if one or more of your units are within the same <b>terrain area as that <b>operation marker, and no enemy units are within that <b>terrain area.",
+                    "vp": 4
+                  }
+                ]
+              },
+              {
+                "when": "SECOND BATTLE ROUND ONWARDS",
+                "trigger": "End of your Command phase (or the end of your turn in the fifth battle round)",
+                "rows": [
+                  {
+                    "text": "You control one or more <b>objectives (excluding your <b>home objective).",
+                    "vp": 4
+                  }
+                ]
+              },
+              {
+                "when": "END OF BATTLE",
+                "rows": [
+                  {
+                    "text": "Only one of your opponent's <b>operation markers is on the battlefield, if one or more of your units are within the same <b>terrain area as that <b>operation marker, and no enemy units are within that <b>terrain area.",
+                    "vp": 5,
+                    "kind": "eob"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "Sabotage",
+          "slug": "sabotage",
+          "number": 2,
+          "image": "primary-missions/priority-assets/sabotage.png",
+          "text": {
+            "name": "Sabotage",
+            "sections": [
+              {
+                "when": "ANY BATTLE ROUND",
+                "trigger": "End of your turn",
+                "rows": [
+                  {
+                    "text": "For each friendly unit that <b>committed sabotage this turn (see reverse).",
+                    "vp": 3,
+                    "perUnit": true
+                  },
+                  {
+                    "text": "For each of those units that is within range of one or more <b>objectives in your opponent's territory.",
+                    "vp": 2,
+                    "perUnit": true,
+                    "cumulative": true
+                  }
+                ]
+              },
+              {
+                "when": "SECOND BATTLE ROUND ONWARDS",
+                "trigger": "End of your Command phase (or the end of your turn in the fifth battle round)",
+                "rows": [
+                  {
+                    "text": "You control one or more <b>objectives (excluding your <b>home objective).",
+                    "vp": 4
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "Secure Asset",
+          "slug": "secure-asset",
+          "number": 3,
+          "image": "primary-missions/priority-assets/secure-asset.png",
+          "text": {
+            "name": "Secure Asset",
+            "sections": [
+              {
+                "when": "ANY BATTLE ROUND",
+                "trigger": "End of your turn",
+                "rows": [
+                  {
+                    "text": "A friendly unit <b>secured the asset this turn (see reverse).",
+                    "vp": 4
+                  },
+                  {
+                    "text": "One or more enemy units that started the turn within range of one or more <b>central objectives are <b>destroyed.",
+                    "vp": 2
+                  }
+                ]
+              },
+              {
+                "when": "SECOND BATTLE ROUND ONWARDS",
+                "trigger": "End of your Command phase (or the end of your turn in the fifth battle round)",
+                "rows": [
+                  {
+                    "text": "You control one or more <b>objectives (excluding your <b>home objective).",
+                    "vp": 4
+                  },
+                  {
+                    "text": "You control three or more <b>objectives.",
+                    "vp": 4
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "Vanguard Operation",
+          "slug": "vanguard-operation",
+          "number": 4,
+          "image": "primary-missions/priority-assets/vanguard-operation.png",
+          "text": {
+            "name": "Vanguard Operation",
+            "sections": [
+              {
+                "when": "ANY BATTLE ROUND",
+                "trigger": "End of your turn",
+                "rows": [
+                  {
+                    "text": "A friendly unit <b>performed a vanguard operation this turn.",
+                    "vp": 4
+                  },
+                  {
+                    "text": "One or more enemy units were <b>destroyed this turn.",
+                    "vp": 2
+                  }
+                ]
+              },
+              {
+                "when": "SECOND BATTLE ROUND ONWARDS",
+                "trigger": "End of your Command phase (or the end of your turn in the fifth battle round)",
+                "rows": [
+                  {
+                    "text": "You control one or more <b>objectives (excluding your <b>home objective).",
+                    "vp": 4
+                  }
+                ]
+              },
+              {
+                "when": "END OF BATTLE",
+                "rows": [
+                  {
+                    "text": "You control your opponent's <b>home objective.",
+                    "vp": 10,
+                    "kind": "eob"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "Vital Link",
+          "slug": "vital-link",
+          "number": 5,
+          "image": "primary-missions/priority-assets/vital-link.png",
+          "text": {
+            "name": "Vital Link",
+            "sections": [
+              {
+                "when": "ANY BATTLE ROUND",
+                "trigger": "End of your turn",
+                "rows": [
+                  {
+                    "text": "You control one or more <b>central objectives.",
+                    "vp": 2
+                  },
+                  {
+                    "text": "For each of your <b>operation markers within range of one of those <b>objectives (see reverse).",
+                    "vp": 1,
+                    "perUnit": true,
+                    "cumulative": true
+                  }
+                ]
+              },
+              {
+                "when": "SECOND BATTLE ROUND ONWARDS",
+                "trigger": "End of your Command phase (or the end of your turn in the fifth battle round)",
+                "rows": [
+                  {
+                    "text": "You control one or more <b>objectives (excluding your <b>home objective).",
+                    "vp": 4
+                  },
+                  {
+                    "text": "One or more of those <b>objectives is a <b>central objective.",
+                    "vp": 4,
+                    "cumulative": true
+                  }
+                ]
+              },
+              {
+                "when": "END OF BATTLE",
+                "rows": [
+                  {
+                    "text": "You control your opponent's <b>home objective.",
+                    "vp": 10,
+                    "kind": "eob"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "secondary": [
+    {
+      "name": "A Grievous Blow",
+      "slug": "a-grievous-blow-defender",
+      "role": "defender",
+      "image": "secondary-missions/defender/a-grievous-blow.png",
+      "text": {
+        "name": "A Grievous Blow",
+        "sections": [
+          {
+            "when": "ANY BATTLE ROUND",
+            "trigger": "End of a turn",
+            "chip": "FIXED",
+            "rows": [
+              {
+                "text": "For each enemy unit with a <b>starting strength of 13 or more that is <b>destroyed this turn.",
+                "vp": "4",
+                "kind": "fixed"
+              }
+            ]
+          },
+          {
+            "when": "ANY BATTLE ROUND",
+            "trigger": "End of a turn",
+            "chip": "TACTICAL",
+            "rows": [
+              {
+                "text": "One or more enemy units with a <b>starting strength of 13 or more were <b>destroyed this turn.",
+                "vp": "5"
+              }
+            ]
+          }
+        ],
+        "kindLabel": "SECONDARY · FIXED / TACTICAL"
+      }
+    },
+    {
+      "name": "A Tempting Target",
+      "slug": "a-tempting-target-defender",
+      "role": "defender",
+      "image": "secondary-missions/defender/a-tempting-target.png",
+      "text": {
+        "name": "A Tempting Target",
+        "sections": [
+          {
+            "when": "ANY BATTLE ROUND",
+            "trigger": "End of your turn",
+            "rows": [
+              {
+                "text": "You control your <b>tempting target.",
+                "vp": "5"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "Assassination",
+      "slug": "assassination-defender",
+      "role": "defender",
+      "image": "secondary-missions/defender/assassination.png",
+      "text": {
+        "name": "Assassination",
+        "sections": [
+          {
+            "when": "ANY BATTLE ROUND",
+            "trigger": "While this card is active",
+            "chip": "FIXED",
+            "rows": [
+              {
+                "text": "For each enemy <b>CHARACTER model <b>destroyed this turn.",
+                "vp": "3",
+                "kind": "fixed"
+              },
+              {
+                "text": "For each of those models with a <b>W of 4 or more.",
+                "vp": "+1",
+                "cumulative": true,
+                "plus": true,
+                "kind": "fixed"
+              }
+            ]
+          },
+          {
+            "when": "ANY BATTLE ROUND",
+            "trigger": "End of either player's turn",
+            "chip": "TACTICAL",
+            "rows": [
+              {
+                "text": "One or more enemy <b>CHARACTER models were <b>destroyed this turn.",
+                "vp": "5"
+              },
+              {
+                "text": "All enemy <b>CHARACTER models have been <b>destroyed during the battle.",
+                "vp": "5",
+                "or": true
+              }
+            ]
+          }
+        ],
+        "kindLabel": "SECONDARY · FIXED / TACTICAL"
+      }
+    },
+    {
+      "name": "Beacon",
+      "slug": "beacon-defender",
+      "role": "defender",
+      "image": "secondary-missions/defender/beacon.png",
+      "text": {
+        "name": "Beacon",
+        "sections": [
+          {
+            "when": "ANY BATTLE ROUND",
+            "trigger": "End of your opponent's turn or the end of the fifth battle round (whichever comes first)",
+            "rows": [
+              {
+                "text": "Your beacon unit is on the battlefield and not within your deployment zone.",
+                "vp": "3"
+              },
+              {
+                "text": "Your beacon unit is on the battlefield and not within your territory.",
+                "vp": "5",
+                "or": true
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "Behind Enemy Lines",
+      "slug": "behind-enemy-lines-defender",
+      "role": "defender",
+      "image": "secondary-missions/defender/behind-enemy-lines.png",
+      "text": {
+        "name": "Behind Enemy Lines",
+        "sections": [
+          {
+            "when": "ANY BATTLE ROUND",
+            "trigger": "End of your turn",
+            "rows": [
+              {
+                "text": "For each friendly unit (excluding <b>AIRCRAFT and <b>battle-shocked units) wholly within your opponent's deployment zone.",
+                "vp": "3"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "Bring it Down",
+      "slug": "bring-it-down-defender",
+      "role": "defender",
+      "image": "secondary-missions/defender/bring-it-down.png",
+      "text": {
+        "name": "Bring It Down",
+        "sections": [
+          {
+            "when": "ANY BATTLE ROUND",
+            "trigger": "End of a turn",
+            "chip": "FIXED",
+            "rows": [
+              {
+                "text": "For each enemy model with a <b>Wounds characteristic of 10 or more that is <b>destroyed this turn.",
+                "vp": "4",
+                "kind": "fixed"
+              }
+            ]
+          },
+          {
+            "when": "ANY BATTLE ROUND",
+            "trigger": "End of a turn",
+            "chip": "TACTICAL",
+            "rows": [
+              {
+                "text": "One or more enemy models with a <b>Wounds characteristic of 10 or more were <b>destroyed this turn.",
+                "vp": "5"
+              }
+            ]
+          }
+        ],
+        "kindLabel": "SECONDARY · FIXED / TACTICAL"
+      }
+    },
+    {
+      "name": "Burden of Trust",
+      "slug": "burden-of-trust-defender",
+      "role": "defender",
+      "image": "secondary-missions/defender/burden-of-trust.png",
+      "text": {
+        "name": "Burden of Trust",
+        "sections": [
+          {
+            "when": "ANY BATTLE ROUND",
+            "trigger": "End of your opponent's turn or the end of the fifth battle round (whichever comes first)",
+            "rows": [
+              {
+                "text": "For each <b>objective guarded by your army.",
+                "vp": "2"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "Centre Ground",
+      "slug": "centre-ground-defender",
+      "role": "defender",
+      "image": "secondary-missions/defender/centre-ground.png",
+      "text": {
+        "name": "Centre Ground",
+        "sections": [
+          {
+            "when": "ANY BATTLE ROUND",
+            "trigger": "End of your turn",
+            "rows": [
+              {
+                "text": "One or more friendly units (excluding <b>AIRCRAFT and <b>battle-shocked units) are within 3\" of the centre of the battlefield, and no enemy units are within 3\" of the centre of the battlefield.",
+                "vp": "3"
+              },
+              {
+                "text": "One or more friendly units (excluding <b>AIRCRAFT and <b>battle-shocked units) are within 3\" of the centre of the battlefield, and no enemy units are within 6\" of the centre of the battlefield.",
+                "vp": "5",
+                "or": true
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "Cleanse",
+      "slug": "cleanse-defender",
+      "role": "defender",
+      "image": "secondary-missions/defender/cleanse.png",
+      "text": {
+        "name": "Cleanse",
+        "sections": [
+          {
+            "when": "ANY BATTLE ROUND",
+            "trigger": "End of your turn",
+            "rows": [
+              {
+                "text": "One <b>objective was cleansed by your army this turn.",
+                "vp": "2"
+              },
+              {
+                "text": "Two or more <b>objectives were cleansed by your army this turn.",
+                "vp": "5",
+                "or": true
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "Defend Stronghold",
+      "slug": "defend-stronghold-defender",
+      "role": "defender",
+      "image": "secondary-missions/defender/defend-stronghold.png",
+      "text": {
+        "name": "Defend Stronghold",
+        "sections": [
+          {
+            "when": "SECOND BATTLE ROUND ONWARDS",
+            "trigger": "End of your opponent's turn or the end of the fifth battle round (whichever comes first)",
+            "rows": [
+              {
+                "text": "You control your <b>home objective.",
+                "vp": "3"
+              },
+              {
+                "text": "No enemy units are within your deployment zone.",
+                "vp": "+2",
+                "cumulative": true,
+                "plus": true
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "Display of Might",
+      "slug": "display-of-might-defender",
+      "role": "defender",
+      "image": "secondary-missions/defender/display-of-might.png",
+      "text": {
+        "name": "Display of Might",
+        "sections": [
+          {
+            "when": "ANY BATTLE ROUND",
+            "trigger": "End of your turn",
+            "rows": [
+              {
+                "text": "There are more friendly units than enemy units (excluding <b>AIRCRAFT and <b>battle-shocked units) wholly within No Man's Land.",
+                "vp": "2"
+              }
+            ]
+          },
+          {
+            "when": "ANY BATTLE ROUND",
+            "trigger": "End of your opponent's turn",
+            "rows": [
+              {
+                "text": "There are more friendly units than enemy units (excluding <b>AIRCRAFT and <b>battle-shocked units) wholly within No Man's Land.",
+                "vp": "5"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "Engage on All Fronts",
+      "slug": "engage-on-all-fronts-defender",
+      "role": "defender",
+      "image": "secondary-missions/defender/engage-on-all-fronts.png",
+      "text": {
+        "name": "Engage on All Fronts",
+        "sections": [
+          {
+            "when": "ANY BATTLE ROUND",
+            "trigger": "End of your turn",
+            "chip": "FIXED",
+            "rows": [
+              {
+                "text": "You have a presence in 3 table quarters.",
+                "vp": "2",
+                "kind": "fixed"
+              },
+              {
+                "text": "You have a presence in 4 table quarters.",
+                "vp": "4",
+                "or": true,
+                "kind": "fixed"
+              }
+            ]
+          },
+          {
+            "when": "ANY BATTLE ROUND",
+            "trigger": "End of your turn",
+            "chip": "TACTICAL",
+            "rows": [
+              {
+                "text": "You have a presence in 3 table quarters.",
+                "vp": "3"
+              },
+              {
+                "text": "You have a presence in 4 table quarters.",
+                "vp": "5",
+                "or": true
+              }
+            ]
+          }
+        ],
+        "kindLabel": "SECONDARY · FIXED / TACTICAL"
+      }
+    },
+    {
+      "name": "Forward Position",
+      "slug": "forward-position-defender",
+      "role": "defender",
+      "image": "secondary-missions/defender/forward-position.png",
+      "text": {
+        "name": "Forward Position",
+        "sections": [
+          {
+            "when": "ANY BATTLE ROUND",
+            "trigger": "End of your turn",
+            "rows": [
+              {
+                "text": "You control your opponent's <b>home objective and/or each <b>expansion objective.",
+                "vp": "5"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "No Prisoners",
+      "slug": "no-prisoners-defender",
+      "role": "defender",
+      "image": "secondary-missions/defender/no-prisoners.png",
+      "text": {
+        "name": "No Prisoners",
+        "sections": [
+          {
+            "when": "ANY BATTLE ROUND",
+            "trigger": "End of a turn",
+            "rows": [
+              {
+                "text": "For each enemy unit <b>destroyed this turn.",
+                "vp": "2"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "Outflank",
+      "slug": "outflank-defender",
+      "role": "defender",
+      "image": "secondary-missions/defender/outflank.png",
+      "text": {
+        "name": "Outflank",
+        "sections": [
+          {
+            "when": "ANY BATTLE ROUND",
+            "trigger": "End of your turn",
+            "rows": [
+              {
+                "text": "One or more friendly units (excluding <b>AIRCRAFT and <b>battle-shocked units) are within 6\" of one or more battlefield edges and not within your territory.",
+                "vp": "3"
+              },
+              {
+                "text": "Two or more friendly units (excluding <b>AIRCRAFT and <b>battle-shocked units) are within 6\" of opposite battlefield edges and one or more of those units is not within your territory.",
+                "vp": "5",
+                "or": true
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "Overwhelming Force",
+      "slug": "overwhelming-force-defender",
+      "role": "defender",
+      "image": "secondary-missions/defender/overwhelming-force.png",
+      "text": {
+        "name": "Overwhelming Force",
+        "sections": [
+          {
+            "when": "ANY BATTLE ROUND",
+            "trigger": "End of a turn",
+            "rows": [
+              {
+                "text": "For each enemy unit that started the turn within range of one or more <b>objectives and is <b>destroyed.",
+                "vp": "3"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "Plunder",
+      "slug": "plunder-defender",
+      "role": "defender",
+      "image": "secondary-missions/defender/plunder.png",
+      "text": {
+        "name": "Plunder",
+        "sections": [
+          {
+            "when": "ANY BATTLE ROUND",
+            "trigger": "End of your turn",
+            "rows": [
+              {
+                "text": "A <b>terrain area was plundered this turn.",
+                "vp": "5"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "Secure No Man's Land",
+      "slug": "secure-no-man-s-land-defender",
+      "role": "defender",
+      "image": "secondary-missions/defender/secure-no-man-s-land.png",
+      "text": {
+        "name": "Secure No Man's Land",
+        "sections": [
+          {
+            "when": "ANY BATTLE ROUND",
+            "trigger": "End of your turn",
+            "rows": [
+              {
+                "text": "You control two or more <b>objectives within No Man's Land (excluding your <b>home objective).",
+                "vp": "5"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "force_disposition": [
+    {
+      "name": "Take and Hold",
+      "slug": "take-and-hold",
+      "image": "force-disposition/take-and-hold.png"
+    },
+    {
+      "name": "Purge the Foe",
+      "slug": "purge-the-foe",
+      "image": "force-disposition/purge-the-foe.png"
+    },
+    {
+      "name": "Reconnaissance",
+      "slug": "reconnaissance",
+      "image": "force-disposition/reconnaissance.png"
+    },
+    {
+      "name": "Priority Assets",
+      "slug": "priority-assets",
+      "image": "force-disposition/priority-assets.png"
+    },
+    {
+      "name": "Disruption",
+      "slug": "disruption",
+      "image": "force-disposition/disruption.png"
+    }
+  ],
+  "layouts": [
+    {
+      "deck": "Take and Hold",
+      "slug": "take-and-hold",
+      "image": "layouts/no-measurements/take-and-hold-mirror-1.png",
+      "battlemaster_url": null
+    },
+    {
+      "deck": "Purge the Foe",
+      "slug": "purge-the-foe",
+      "image": "layouts/no-measurements/take-and-hold-vs-purge-the-foe-1-portrait.png",
+      "battlemaster_url": null
+    },
+    {
+      "deck": "Reconnaissance",
+      "slug": "reconnaissance",
+      "image": "layouts/no-measurements/take-and-hold-vs-reconnaissance-1.png",
+      "battlemaster_url": null
+    },
+    {
+      "deck": "Priority Assets",
+      "slug": "priority-assets",
+      "image": "layouts/no-measurements/take-and-hold-vs-priority-assets-1.png",
+      "battlemaster_url": null
+    },
+    {
+      "deck": "Disruption",
+      "slug": "disruption",
+      "image": "layouts/no-measurements/take-and-hold-vs-disruption-1-portrait.png",
+      "battlemaster_url": null
+    }
+  ],
+  "matrix": {
+    "decks": [
+      "Take and Hold",
+      "Purge the Foe",
+      "Disruption",
+      "Reconnaissance",
+      "Priority Assets"
+    ],
+    "cells": {
+      "Take and Hold": {
+        "Take and Hold": "Battlefield Dominance",
+        "Purge the Foe": "Immovable Object",
+        "Disruption": "Determined Acquisition",
+        "Reconnaissance": "Purge and Secure",
+        "Priority Assets": "Inescapable Dominion"
+      },
+      "Purge the Foe": {
+        "Take and Hold": "Unstoppable Force",
+        "Purge the Foe": "Meatgrinder",
+        "Disruption": "Punishment",
+        "Reconnaissance": "Consecrate",
+        "Priority Assets": "Destroyer's Wrath"
+      },
+      "Disruption": {
+        "Take and Hold": "Death Trap",
+        "Purge the Foe": "Delaying Action",
+        "Disruption": "Outmanoeuvre",
+        "Reconnaissance": "Smoke and Mirrors",
+        "Priority Assets": "Locate and Deny"
+      },
+      "Reconnaissance": {
+        "Take and Hold": "Reconnaissance Sweep",
+        "Purge the Foe": "Triangulation",
+        "Disruption": "Surveil the Foe",
+        "Reconnaissance": "Gather Intel",
+        "Priority Assets": "Search and Scour"
+      },
+      "Priority Assets": {
+        "Take and Hold": "Secure Asset",
+        "Purge the Foe": "Vital Link",
+        "Disruption": "Extract Relic",
+        "Reconnaissance": "Vanguard Operation",
+        "Priority Assets": "Sabotage"
+      }
+    }
+  },
+  "_errors": []
+}

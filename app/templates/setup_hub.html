@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block title %}Configuration — {{ g.name }}{% endblock %}
+{% block heading %}Configuration : {{ g.name }}{% endblock %}
+{% block content %}
+
+{# ---- Assistant en 3 étapes (débutants) ---- #}
+<div class="card wizard">
+  <h2>Étapes de configuration</h2>
+  <ol class="steps">
+    <li class="{{ 'done' if step1.done_p1 and step1.done_p2 else 'todo' }}">
+      <span class="stepnum">1</span>
+      <div class="stepbody">
+        <strong>Faction &amp; roster de chaque joueur</strong>
+        <div class="small muted">
+          Joueur 1 :
+          {% if step1.done_p1 %}<span class="ok">✓ prêt</span>
+          {% elif players[1].faction_file %}<span class="warn">faction choisie, roster vide</span>
+          {% else %}<span class="warn">à faire</span>{% endif %}
+          · Joueur 2 :
+          {% if step1.done_p2 %}<span class="ok">✓ prêt</span>
+          {% elif players[2].faction_file %}<span class="warn">faction choisie, roster vide</span>
+          {% else %}<span class="warn">à faire</span>{% endif %}
+        </div>
+      </div>
+    </li>
+    <li class="{{ 'done' if step2.done else 'todo' }}">
+      <span class="stepnum">2</span>
+      <div class="stepbody">
+        <strong>Choix de la mission</strong>
+        <div class="small muted">
+          {% if step2.done %}<span class="ok">✓ mission configurée</span>
+          {% else %}<span class="warn">à faire</span>{% endif %}
+        </div>
+      </div>
+    </li>
+    <li class="{{ 'done' if step3.done else 'todo' }}">
+      <span class="stepnum">3</span>
+      <div class="stepbody">
+        <strong>Démarrage de la partie</strong>
+        <div class="small muted">
+          {% if step3.done %}<span class="ok">✓ tout est prêt — démarre ci-dessous ↓</span>
+          {% else %}<span class="warn">termine les étapes 1 et 2 d'abord</span>{% endif %}
+        </div>
+      </div>
+    </li>
+  </ol>
+</div>
+
+<div class="grid2">
+  {% for seat in [1,2] %}
+  <div class="card">
+    <h2><span class="pill p{{ seat }}">Joueur {{ seat }}</span> {{ players[seat].name }}</h2>
+    {% if players[seat].faction_file %}
+      <p class="small muted">Faction : {{ players[seat].faction_name }}
+        {% if players[seat].detachment %} · Détachement : {{ players[seat].detachment }}{% endif %}
+      </p>
+      <p class="small">Unités : {{ units[seat]|length }} · {{ units[seat]|sum(attribute='points') }} pts</p>
+    {% else %}
+      <p class="muted small">Faction non choisie — clique puis choisis ta faction dans la liste.</p>
+    {% endif %}
+    <a class="btn" href="{{ url_for('setup.roster', gid=g.id, seat=seat) }}">Roster J{{ seat }}</a>
+  </div>
+  {% endfor %}
+</div>
+
+<div class="card">
+  <h2>Mission</h2>
+  <p class="small muted">Choisis les dispositions de force, les secondaires et le layout de terrain.
+    Les cartes primaires sont auto-résolues depuis la matrix 11e.</p>
+  <a class="btn" href="{{ url_for('setup.mission', gid=g.id) }}">{{ 'Modifier' if has_mission else 'Configurer' }} la mission</a>
+</div>
+
+<div class="card">
+  <h2>Démarrage</h2>
+  {% if ready and step2.done %}
+    <p class="ok">✓ Tout est prêt : les deux joueurs ont un roster et la mission est configurée.</p>
+    <a class="btn primary" href="{{ url_for('setup.start_confirm', gid=g.id) }}">Démarrer la partie →</a>
+  {% elif ready %}
+    <p class="warn small">Rosters OK — il manque le choix de mission (étape 2).</p>
+    <a class="btn" href="{{ url_for('setup.mission', gid=g.id) }}">Configurer la mission →</a>
+  {% else %}
+    <p class="muted small">Il faut au moins une unité et une faction pour chaque joueur (étape 1),
+      puis la mission (étape 2) avant de démarrer.</p>
+    <button disabled>Démarrer</button>
+  {% endif %}
+</div>
+{% endblock %}
