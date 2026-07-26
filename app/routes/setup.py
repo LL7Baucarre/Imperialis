@@ -235,20 +235,24 @@ def import_roster(gid, seat):
         return redirect(url_for("setup.roster", gid=gid, seat=seat))
 
     if not parsed.units:
-        flash("Format non reconnu ou roster vide. NewRecruit : exporte en "
-              "« BattleScribe (.rosz) » ou « JSON » et réessaie.", "error")
+        flash("Format non reconnu ou roster vide. Formats acceptés : export "
+              "Imperialis (JSON), NewRecruit « BattleScribe (.rosz) » ou JSON, "
+              "BattleScribe (.ros/.rosz).", "error")
         return redirect(url_for("setup.roster", gid=gid, seat=seat))
 
     prefer = player.get("faction_file")
     result = IMP.resolve(parsed, prefer_faction_file=prefer)
 
-    # If the player has no faction yet, adopt the roster's faction.
+    # If the player has no faction yet, adopt the roster's faction (+ detachment,
+    # when known exactly — our own export carries it; BattleScribe/NewRecruit
+    # rosters don't expose it in a form we can trust).
     roster_faction = result.faction_file
     if not prefer and roster_faction:
         fname = friendly_faction_name(roster_faction, parsed.faction_name)
-        models.set_player_faction(player["id"], roster_faction, fname, None)
+        models.set_player_faction(player["id"], roster_faction, fname, parsed.detachment)
         get_db().commit()
-        flash(f"Faction définie : {fname}.", "info")
+        flash(f"Faction définie : {fname}."
+              + (f" Détachement : {parsed.detachment}." if parsed.detachment else ""), "info")
         prefer = roster_faction
     elif prefer and roster_faction and prefer != roster_faction:
         flash(f"Note : le roster est pour « {parsed.faction_name or roster_faction} » "

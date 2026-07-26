@@ -36,9 +36,11 @@ class ParsedUnit:
 @dataclass
 class ParsedRoster:
     faction_catalogue_id: str | None = None
+    faction_file: str | None = None     # BSData filename, known exactly for our own export
     faction_name: str | None = None
+    detachment: str | None = None
     units: list[ParsedUnit] = field(default_factory=list)
-    format: str = ""                   # "rosz" | "ros" | "newrecruit-json"
+    format: str = ""                   # "rosz" | "ros" | "newrecruit-json" | "imperialis-roster"
 
 
 # ---------------------------------------------------------------------------
@@ -58,6 +60,12 @@ def _detect(filename: str, data: bytes) -> str:
     if name.endswith(".ros") or name.endswith(".xml"):
         return "ros"
     if name.endswith(".json") or stripped[:1] in (b"{", b"["):
+        if stripped[:1] == b"{":
+            try:
+                if json.loads(data.decode("utf-8-sig")).get("format") == "imperialis-roster":
+                    return "imperialis-roster"
+            except (UnicodeDecodeError, json.JSONDecodeError):
+                pass
         return "newrecruit-json"
     # Fall back to content sniffing.
     if b"<roster" in data[:4096] or b"rosterSchema" in data[:4096]:
@@ -72,7 +80,39 @@ def parse_roster(filename: str, data: bytes) -> ParsedRoster:
         return _parse_rosz(data)
     if fmt == "ros":
         return _parse_ros(data, "ros")
+    if fmt == "imperialis-roster":
+        return _parse_imperialis_roster(data)
     return _parse_newrecruit_json(data)
+
+
+# ---------------------------------------------------------------------------
+# Notre propre export (app.routes.setup.export_roster) — ré-import direct
+# ---------------------------------------------------------------------------
+
+def _parse_imperialis_roster(data: bytes) -> ParsedRoster:
+    """Ré-importe un JSON exporté par cette app (voir setup.export_roster).
+    Contrairement aux formats NewRecruit/BattleScribe, on connaît exactement
+    le fichier de faction et l'id BSData de chaque unité — pas de résolution
+    par nom nécessaire."""
+    pr = ParsedRoster(format="imperialis-roster")
+    try:
+        doc = json.loads(data.decode("utf-8-sig"))
+    except (UnicodeDecodeError, json.JSONDecodeError):
+        return pr
+    player = doc.get("player") or {}
+    pr.faction_file = player.get("faction_file")
+    pr.faction_name = player.get("faction_name")
+    pr.detachment = player.get("detachment")
+    for u in doc.get("units") or []:
+        if not isinstance(u, dict):
+            continue
+        pr.units.append(ParsedUnit(
+            entry_id=u.get("bsdata_unit_id"),
+            name=u.get("name") or "",
+            models=max(1, int(u.get("models_total") or 1)),
+            points=u.get("points"),
+        ))
+    return pr
 
 
 # ---------------------------------------------------------------------------
@@ -323,8 +363,9 @@ def resolve(parsed: ParsedRoster, prefer_faction_file: str | None = None):
     :class:`ImportResult` with matched / unmatched lists."""
     from app.data import bsdata
 
-    # Determine the target faction file.
-    faction_file = prefer_faction_file
+    # Determine the target faction file. Our own export knows it exactly;
+    # otherwise resolve the BattleScribe/NewRecruit catalogue id.
+    faction_file = prefer_faction_file or parsed.faction_file
     if not faction_file and parsed.faction_catalogue_id:
         faction_file = bsdata.faction_file_by_catalogue_id(parsed.faction_catalogue_id)
 
