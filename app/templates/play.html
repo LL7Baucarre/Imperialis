@@ -54,7 +54,7 @@
       {% if assist.detachment_rule %}
       <div class="det-rule">
         <div class="small"><b>{{ assist.detachment_rule[0] }}</b> — règle de détachement</div>
-        <div class="small muted">{{ assist.detachment_rule[1]|bsd }}</div>
+        <div class="small muted" translate="no">{{ assist.detachment_rule[1]|bsd }}</div>
       </div>
       {% endif %}
 
@@ -75,8 +75,8 @@
         {% for a in assist.actions %}
         <li class="act-{{ a.kind }}" data-id="{{ a.id }}">
           <span class="who">[{{ a.who }}]</span>
-          {% if a.kind == 'unit' %}<span class="act-unit">{{ a.unit }} · {{ a.name }}</span>
-          <span class="small act-desc">{{ a.text|bsd|safe }}</span>
+          {% if a.kind == 'unit' %}<span class="act-unit" translate="no">{{ a.unit }} · {{ a.name }}</span>
+          <span class="small act-desc" translate="no">{{ a.text|bsd|safe }}</span>
           {% else %}<span>{{ a.text }}</span>{% endif %}
         </li>
         {% else %}
@@ -110,12 +110,12 @@
       {% set iv_owner = iv.owner or 'both' %}
       {% set iv_pid = opp_player.id if iv_owner == 'opponent' else active_player.id %}
       <div class="interv {{ 'interv-opp' if iv_owner == 'opponent' else '' }}">
-        <b>{{ iv.name }}</b> <span class="cp">{{ iv.cp }} CP</span>
+        <b translate="no">{{ iv.name }}</b> <span class="cp">{{ iv.cp }} CP</span>
         <span class="small muted">· {{ iv.window }}</span>
         {% if iv_owner == 'opponent' %}<span class="pill" style="background:#7f1d1d;color:#fee2e2;font-size:.68rem">Adversaire</span>
         {% elif iv_owner == 'both' %}<span class="pill" style="font-size:.68rem">Les deux</span>{% endif %}
         <button class="ghost small" style="float:right" onclick="Game.useStratagem({{ iv_pid }}, {{ iv.name|tojson|forceescape }}, {{ iv.cp or 0 }})">Utiliser</button>
-        <div class="small muted">{{ iv.note }}</div>
+        <div class="small muted" translate="no">{{ iv.note }}</div>
       </div>
       {% endfor %}
 
@@ -157,12 +157,12 @@
       <h2>Mission</h2>
       {% if missions %}
       <div class="grid2">
-        <div class="mission-card">
+        <div class="mission-card" translate="no">
           <div class="small"><span class="pill p1">J1</span> {{ missions.primary_card_p1 or '—' }}</div>
           {% if p1_img %}<img class="zoomable" src="{{ p1_img }}" alt="{{ missions.primary_card_p1 }}">{% endif %}
           {% if p1_text %}<details class="ct-collapse"><summary>Texte de la carte</summary>{{ card_text(p1_text) }}</details>{% endif %}
         </div>
-        <div class="mission-card">
+        <div class="mission-card" translate="no">
           <div class="small"><span class="pill p2">J2</span> {{ missions.primary_card_p2 or '—' }}</div>
           {% if p2_img %}<img class="zoomable" src="{{ p2_img }}" alt="{{ missions.primary_card_p2 }}">{% endif %}
           {% if p2_text %}<details class="ct-collapse"><summary>Texte de la carte</summary>{{ card_text(p2_text) }}</details>{% endif %}
@@ -173,7 +173,7 @@
       <div class="grid2">
         {% for seat in [1,2] %}
         {% set fd_img = (fd_p1_img if seat==1 else fd_p2_img) %}
-        <div class="mission-card">
+        <div class="mission-card" translate="no">
           <div class="small"><span class="pill p{{ seat }}">J{{ seat }}</span> {{ missions['force_disposition_p'~seat] or '—' }}</div>
           {% if fd_img %}<img class="zoomable" src="{{ fd_img }}" alt="Force disposition J{{ seat }}">{% endif %}
         </div>
@@ -182,7 +182,7 @@
 
       {% if layout_img %}
       <h3 class="small" style="margin-top:10px">Layout de terrain</h3>
-      <div class="mission-card">
+      <div class="mission-card" translate="no">
         <div class="small muted">{{ missions.primary_deck_p1 }} vs {{ missions.primary_deck_p2 }}</div>
         <img class="zoomable" src="{{ layout_img }}" alt="Layout {{ missions.primary_deck_p1 }} vs {{ missions.primary_deck_p2 }}">
         {% if layout_battlemaster_url %}<a class="small" href="{{ layout_battlemaster_url }}" target="_blank">Battlemaster ↗</a>{% endif %}
@@ -217,7 +217,8 @@
         <span class="small muted" style="float:right">{{ units[seat]|sum(attribute='points') }} pts</span>
       </h2>
       <div class="small muted" style="margin-bottom:6px">{{ players[seat].faction_name }}{% if players[seat].detachment %} · {{ players[seat].detachment }}{% endif %}
-        · <a href="{{ url_for('game.reference', gid=g.id, seat=seat) }}">référence codex</a></div>
+        · <a href="{{ url_for('game.reference', gid=g.id, seat=seat) }}">référence codex</a>
+        · <a href="{{ url_for('setup.export_roster', gid=g.id, seat=seat) }}">exporter l'armée</a></div>
       {% for u in units[seat] %}
         {{ unit_panel(u, seat) }}
       {% else %}

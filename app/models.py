@@ -252,9 +252,24 @@ def add_unit(gid, player_id, unit_card, custom_name=None, models=None):
     categories = getattr(u, "categories", None) or (u.get("categories") if isinstance(u, dict) else None) or []
     uid = getattr(u, "id", None) or (u.get("id") if isinstance(u, dict) else None)
     name = getattr(u, "name", None) or (u.get("name") if isinstance(u, dict) else None)
-    points = getattr(u, "points", None) or (u.get("points") if isinstance(u, dict) else None) or 0
+    base_pts = getattr(u, "points", None) or (u.get("points") if isinstance(u, dict) else None) or 0
     transport = getattr(u, "transport", None) if not isinstance(u, dict) else u.get("transport")
     n_models = models or 1
+    # Points 11e : coût par figurine × nombre de figurines. base_pts = coût de
+    # l'unité pour sa taille mini (base_models) ; points_per_model est dérivé
+    # côté bsdata quand possible, sinon on le recalcule ici.
+    ppm = getattr(u, "points_per_model", None)
+    if ppm is None and isinstance(u, dict):
+        ppm = u.get("points_per_model")
+    if not ppm:
+        base_models = (getattr(u, "base_models", None)
+                       or (u.get("base_models") if isinstance(u, dict) else None) or 1)
+        try:
+            base_models = max(1, int(base_models))
+        except (TypeError, ValueError):
+            base_models = 1
+        ppm = round(base_pts / base_models) if base_pts else 0
+    points = (ppm or 0) * n_models
     # Wounds (PV) : W characteristic per model * model count. Best-effort parse
     # via combat.parse_value (handles "3", "D6", "2D3+1" -> max).
     wounds_per_model = 1

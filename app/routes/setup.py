@@ -1,5 +1,8 @@
 """Routes de pré-partie : création, constructeur de roster, choix de mission."""
-from flask import Blueprint, render_template, request, redirect, url_for, flash, abort
+from flask import Blueprint, render_template, request, redirect, url_for, flash, abort, Response
+
+import json
+import datetime as _dt
 
 from app import models
 from app.db import get_db
@@ -12,6 +15,27 @@ from app.data import importer as IMP
 from app.data import validator as VAL
 
 bp = Blueprint("setup", __name__)
+
+
+# Organisation du sélecteur d'unités par rôle (Army Roster 11e).
+#   ROSTER_GROUPS  = ordre de priorité d'affectation (une unité peut porter
+#                    plusieurs catégories ; on prend la plus spécifique).
+#   GROUP_DISPLAY  = ordre d'affichage des en-têtes.
+# NB : les unités qui ne matchent aucun de ces rôles tombent dans « Autres ».
+#     Les alliés cross-faction (Imperial Agents, Knights…) ne sont pas inclus
+#     ici (nécessite les relations d'alliance par faction).
+ROSTER_GROUPS = ["Epic Hero", "Character", "Battleline", "Dedicated Transport",
+                 "Fortification", "Mounted", "Vehicle", "Infantry"]
+GROUP_DISPLAY = ["Epic Hero", "Character", "Battleline", "Infantry", "Mounted",
+                 "Vehicle", "Dedicated Transport", "Fortification"]
+
+
+def _roster_group(u):
+    cats = set(u.categories or [])
+    for g in ROSTER_GROUPS:
+        if g in cats:
+            return g
+    return "Autres"
 
 
 # ---------------------------------------------------------------------------
@@ -83,18 +107,23 @@ def roster(gid, seat):
     faction_data = bsdata.get_faction(faction_file) if faction_file else None
     factions = playable_factions()
 
-    # Recherche d'unités
+    # Recherche d'unités (regroupées par rôle 11e — Army Roster)
     search = request.args.get("q", "").strip()
     category = request.args.get("cat", "").strip() or None
+    if category and category not in GROUP_DISPLAY and category != "Autres":
+        category = None
     units_browser = []
-    cats = set()
+    grouped = {}
     if faction_data:
-        for u in faction_data.units:
-            for c in (u.categories or []):
-                cats.add(c)
-        units_browser = bsdata.faction_units(faction_file, search=search or None, category=category)
-        # on ne montre que les entrées de type "unit" (faction_units filtre déjà)
-        units_browser = units_browser[:200]
+        units_browser = bsdata.faction_units(faction_file, search=search or None)
+        units_browser = units_browser[:300]
+        for u in units_browser:
+            grouped.setdefault(_roster_group(u), []).append(u)
+    ordered_groups = [(g, grouped[g]) for g in GROUP_DISPLAY if g in grouped]
+    if "Autres" in grouped:
+        ordered_groups.append(("Autres", grouped["Autres"]))
+    if category:
+        ordered_groups = [(g, lst) for g, lst in ordered_groups if g == category]
 
     detachments = []
     if faction_data:
@@ -114,7 +143,7 @@ def roster(gid, seat):
         player=player, factions=factions, faction_file=faction_file,
         faction_name=friendly_faction_name(faction_file, player.get("faction_name")),
         faction_data=faction_data, detachments=detachments,
-        units_browser=units_browser, categories=sorted(cats),
+        units_browser=units_browser, groups=ordered_groups, group_options=GROUP_DISPLAY,
         search=search, category=category, roster=roster_units, total_pts=total_pts,
         points_limit=points_limit, issues=issues,
         other_ready=bool(players[other_seat].get("faction_file")),
@@ -239,6 +268,82 @@ def import_roster(gid, seat):
         summary += f" {len(result.unmatched)} non reconnue(s) : {names}{more}."
     flash(summary, "ok")
     return redirect(url_for("setup.roster", gid=gid, seat=seat))
+
+
+# ---------------------------------------------------------------------------
+# Export de roster (JSON téléchargeable, pour conserver/réutiliser une armée)
+# ---------------------------------------------------------------------------
+@bp.route("/setup/<int:gid>/export/<int:seat>")
+def export_roster(gid, seat):
+    if seat not in (1, 2):
+        abort(404)
+    g = get_game_or_404(gid)
+    _, players, units = game_context(gid)
+    player = players[seat]
+    roster_units = units.get(seat, [])
+    payload = {
+        "format": "imperialis-roster",
+        "version": 1,
+        "exported_at": _dt.datetime.utcnow().isoformat() + "Z",
+        "game": {"id": gid, "name": g["name"]},
+        "player": {
+            "name": player.get("name"),
+            "faction_file": player.get("faction_file"),
+            "faction_name": player.get("faction_name"),
+            "detachment": player.get("detachment"),
+        },
+        "points_limit": models.get_points_limit(gid),
+        "total_points": sum(u["points"] for u in roster_units),
+        "units": [
+            {
+                "bsdata_unit_id": u.get("bsdata_unit_id"),
+                "name": u.get("name"),
+                "custom_name": u.get("custom_name"),
+                "points": u.get("points"),
+                "models_total": u.get("models_total"),
+                "categories": u.get("categories") or [],
+                "keywords": u.get("keywords") or [],
+                "stats": u.get("stats") or {},
+                "abilities": u.get("abilities") or [],
+                "weapons": u.get("weapons") or [],
+            }
+            for u in roster_units
+        ],
+    }
+    body = json.dumps(payload, indent=2, ensure_ascii=False)
+    p_slug = (player.get("name") or f"joueur{seat}").strip().replace(" ", "_")
+    f_slug = (player.get("faction_file") or "armee").replace(".json", "")
+    resp = Response(body, mimetype="application/json")
+    resp.headers["Content-Disposition"] = f'attachment; filename="imperialis-{f_slug}-{p_slug}.json"'
+    return resp
+
+
+# ---------------------------------------------------------------------------
+# Fiche complète d'une unité BSData (rendu pour la modale du sélecteur)
+# ---------------------------------------------------------------------------
+@bp.route("/setup/<int:gid>/unit-card/<int:seat>/<unit_id>")
+def unit_card(gid, seat, unit_id):
+    if seat not in (1, 2):
+        abort(404)
+    get_game_or_404(gid)
+    _, players, _ = game_context(gid)
+    faction_file = players[seat].get("faction_file")
+    if not faction_file:
+        abort(404)
+    u = bsdata.get_unit(faction_file, unit_id)
+    if not u:
+        abort(404)
+    data = {
+        "name": u.name, "custom_name": None,
+        "keywords": u.keywords, "categories": u.categories,
+        "stats": u.statline,
+        "abilities": u.abilities, "weapons": u.weapons,
+        "transport": u.transport,
+        "models_total": u.base_models, "models_current": u.base_models,
+        "points": u.points, "points_per_model": u.points_per_model,
+        "half_strength": False, "battle_shocked": False,
+    }
+    return render_template("unit_modal.html", u=data)
 
 
 # ---------------------------------------------------------------------------

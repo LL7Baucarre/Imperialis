@@ -37,26 +37,34 @@
         <input type="text" name="q" value="{{ search }}" placeholder="Rechercher…" style="padding:6px;width:55%">
         <select name="cat" onchange="this.form.submit()" style="padding:6px">
           <option value="">Toutes catégories</option>
-          {% for c in categories %}
+          {% for c in group_options %}
             <option value="{{ c }}" {{ 'selected' if c==category else '' }}>{{ c }}</option>
           {% endfor %}
         </select>
         <button class="ghost">Filtrer</button>
       </form>
 
-      <div style="max-height:480px;overflow:auto">
-      {% for u in units_browser %}
-        <div class="unit" style="margin-bottom:6px">
-          <form method="post" action="{{ url_for('setup.add_unit_route', gid=g.id, seat=seat) }}">
-            <input type="hidden" name="unit_id" value="{{ u.id }}">
-            <div class="uname">{{ u.name }} <span class="small muted">· {{ u.points }} pts</span></div>
-            <div class="small muted">{{ (u.categories or []) | join(', ') }}</div>
-            {{ statline(u.statline) }}
-            <div style="margin-top:4px">
-              <label class="small">Modèles: <input type="number" name="models" value="1" min="1" max="20" style="width:48px"></label>
-              <button class="primary small">+ Ajouter</button>
-            </div>
-          </form>
+      <div style="max-height:520px;overflow:auto">
+      {% for gname, gunits in groups %}
+        <div class="roster-group">
+          <h3 class="roster-group-title" translate="no">{{ gname }} <span class="small muted">({{ gunits|length }})</span></h3>
+          {% for u in gunits %}
+          <div class="unit" style="margin-bottom:6px">
+            <form method="post" action="{{ url_for('setup.add_unit_route', gid=g.id, seat=seat) }}">
+              <input type="hidden" name="unit_id" value="{{ u.id }}">
+              <div class="uname" translate="no">
+                <a href="javascript:void(0)" class="uname-link" onclick="CardModal.open({{ u.id|tojson|forceescape }})">{{ u.name }}</a>
+                <span class="small muted">· {{ u.points }} pts · {{ u.points_per_model }}/fig.</span>
+              </div>
+              <div class="small muted" translate="no">{{ (u.categories or []) | join(', ') }} · {{ u.base_models }}–{{ u.max_models }} mod.</div>
+              {{ statline(u.statline) }}
+              <div style="margin-top:4px">
+                <label class="small">Modèles: <input type="number" name="models" value="{{ u.base_models }}" min="1" max="{{ u.max_models }}" style="width:56px"></label>
+                <button class="primary small">+ Ajouter ({{ u.points_per_model * u.base_models }} pts)</button>
+              </div>
+            </form>
+          </div>
+          {% endfor %}
         </div>
       {% else %}
         <p class="muted small">Aucune unité (ajuste la recherche).</p>
@@ -78,6 +86,12 @@
         </label>
         <button class="ghost small" type="submit">OK</button>
       </form>
+
+      {% if roster %}
+      <div style="margin:6px 0 10px">
+        <a class="btn small" href="{{ url_for('setup.export_roster', gid=g.id, seat=seat) }}">⬇ Exporter l'armée (JSON)</a>
+      </div>
+      {% endif %}
 
       {% if issues %}
       <div class="validation">
@@ -123,4 +137,31 @@
     </div>
   </div>
 </div>
+
+{# ---- Modale fiche unité (sélecteur) ---- #}
+<div class="modal" id="card-modal" onclick="if(event.target===this)CardModal.close()">
+  <div class="box" id="card-modal-content"></div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const GID = {{ g.id }};
+const SEAT = {{ seat }};
+const CardModal = {
+  async open(unitId) {
+    const m = document.getElementById('card-modal');
+    const c = document.getElementById('card-modal-content');
+    c.innerHTML = '<p>Chargement…</p>';
+    m.classList.add('open');
+    try {
+      const html = await fetch(`/setup/${GID}/unit-card/${SEAT}/${encodeURIComponent(unitId)}`).then(r => r.text());
+      c.innerHTML = html;
+    } catch (e) {
+      c.innerHTML = '<p class="muted small">Fiche indisponible.</p>';
+    }
+  },
+  close() { document.getElementById('card-modal').classList.remove('open'); }
+};
+</script>
 {% endblock %}

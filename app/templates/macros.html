@@ -12,7 +12,7 @@
 {# Tableau de statline #}
 {% macro statline(stats) %}
 {% if stats %}
-<table class="stats">
+<table class="stats" translate="no">
   <tr>{% for k in ['M','T','Sv','W','LD','OC','InSv'] %}<th>{{ k }}</th>{% endfor %}</tr>
   <tr>
     {% for k in ['M','T','Sv','W','LD','OC','InSv'] %}
@@ -28,7 +28,7 @@
 <div class="unit {{ 'shocked' if u.battle_shocked else '' }}" data-unit-id="{{ u.id }}" data-seat="{{ seat }}">
   <div class="uname">
     <span class="pill p{{ seat }}">{{ 'J'~seat }}</span>
-    {{ u.custom_name or u.name }}
+    <span translate="no">{{ u.custom_name or u.name }}</span>
     {% if u.battle_shocked %} <span class="pill" style="background:#7f1d1d;color:#fee2e2">Shock</span>{% endif %}
     {% if u.half_strength %} <span class="half">DEMI-EFFECTIF</span>{% endif %}
   </div>
@@ -57,7 +57,7 @@
 {# Texte structuré d'une carte de mission (primary/secondary) #}
 {% macro card_text(text) %}
 {% if text %}
-<div class="cardtext">
+<div class="cardtext" translate="no">
   {% if text.kindLabel %}<div class="small muted">{{ text.kindLabel }}</div>{% endif %}
   {% if text.rule %}<div class="small" style="margin-bottom:4px">{{ text.rule|safe }}</div>{% endif %}
   {% for sec in text.sections %}

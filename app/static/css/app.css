@@ -112,6 +112,9 @@ button:disabled { opacity: .5; cursor: not-allowed; }
   font-weight: 700; margin: 2px; box-shadow: 0 1px 3px rgba(0,0,0,.4);
 }
 .dice-result .sum { color: var(--accent); font-weight: 700; margin-left: 8px; }
+.dice-row { display: block; margin: 4px 0; line-height: 1.5; }
+.dice-face.hit { box-shadow: 0 0 0 2px var(--accent), 0 1px 3px rgba(0,0,0,.45); }
+.dice-face.miss { background: #eee; color: #999; filter: grayscale(.6); }
 .preset-row button { margin: 2px 4px 2px 0; }
 
 /* Unités */
@@ -122,6 +125,11 @@ button:disabled { opacity: .5; cursor: not-allowed; }
 .unit.shocked { border-color: var(--accent-2); }
 .half { color: var(--warn); font-weight: 700; font-size: .72rem; }
 .unit details summary { cursor: pointer; }
+.roster-group { margin-bottom: 8px; }
+.roster-group-title { font-size: .78rem; text-transform: uppercase; letter-spacing: .04em;
+  color: var(--accent); margin: 10px 0 4px; border-bottom: 1px solid var(--line); padding-bottom: 2px; }
+.uname-link { color: var(--accent); text-decoration: none; cursor: pointer; }
+.uname-link:hover { text-decoration: underline; }
 .unit ul.abil { margin: 4px 0; padding-left: 18px; }
 .unit ul.abil li { font-size: .8rem; margin-bottom: 4px; }
 .unit ul.abil b { color: var(--accent); }

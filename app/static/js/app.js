@@ -183,11 +183,17 @@ const Resolver = {
       <div class="dice-tools" style="margin-top:8px">${dice}<div id="roll-out" class="small" style="margin-top:6px"></div></div>`;
   },
 
+  _diceFace(v, cls = "") {
+    return `<span class="dice-face ${cls}">${v}</span>`;
+  },
+
   roll(kind) {
     const res = this.state.result;
     if (!res) return;
     const out = document.getElementById("roll-out");
     const rollDice = (n) => { const a = []; for (let i = 0; i < n; i++) a.push(1 + Math.floor(Math.random() * 6)); return a; };
+    // Mêmes dés animés (dice-pop) que le Battle Shock : un span .dice-face par dé.
+    const faces = (dice, tgt) => dice.map(v => this._diceFace(v, v >= tgt ? "hit" : "miss")).join("");
     if (kind === "wound") {
       const tgt = res.wound_target;
       if (!tgt) { out.textContent = "Données incomplètes."; return; }
@@ -195,7 +201,7 @@ const Resolver = {
       const dice = rollDice(n);
       const succ = dice.filter(v => v >= tgt).length;
       this.state.woundSaves = succ;
-      out.innerHTML = `Blessures : [${dice.join(", ")}] → <b>${succ}</b> réussite(s) sur ${n} (≥${tgt}+).`
+      out.innerHTML = `<div class="dice-result">Blessures : <span class="dice-row">${faces(dice, tgt)}</span> → <b>${succ}</b> réussite(s) sur ${n} (≥${tgt}+).</div>`
         + (succ > 0 ? ` <button class="btn small" onclick="Resolver.roll('save')">Lancer ${succ} sauvegardes →</button>` : "");
     } else {
       const tgt = res.save.chosen_target;
@@ -205,7 +211,7 @@ const Resolver = {
       const svd = dice.filter(v => v >= tgt).length;
       const failed = m - svd;
       const dmg = this.state.weapon ? this.state.weapon.D : "?";
-      out.innerHTML = `Sauvegardes : [${dice.join(", ")}] → <b>${failed}</b> non sauvegardée(s) sur ${m} (≥${tgt}+). → ~${failed} × ${esc(dmg)} dégât(s) potentiel(s).`;
+      out.innerHTML = `<div class="dice-result">Sauvegardes : <span class="dice-row">${faces(dice, tgt)}</span> → <b>${failed}</b> non sauvegardée(s) sur ${m} (≥${tgt}+). → ~${failed} × ${esc(dmg)} dégât(s) potentiel(s).</div>`;
     }
   },
 };

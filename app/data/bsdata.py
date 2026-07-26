@@ -103,6 +103,63 @@ def _pts(costs: list | None) -> int | None:
     return None
 
 
+def _min_selections(entry: dict) -> int:
+    """Valeur de la contrainte 'min selections' d'une entrée, ou 0."""
+    for c in (entry.get("constraints") or []):
+        if isinstance(c, dict) and c.get("type") == "min" and c.get("field") == "selections":
+            try:
+                return int(c.get("value"))
+            except (TypeError, ValueError):
+                return 0
+    return 0
+
+
+def _group_sel_bound(g: dict, kind: str) -> int | None:
+    """Contrainte min/max 'selections' d'un groupe (plus grande valeur), ou None."""
+    out = None
+    for c in (g.get("constraints") or []):
+        if isinstance(c, dict) and c.get("type") == kind and c.get("field") == "selections":
+            try:
+                v = int(c.get("value"))
+            except (TypeError, ValueError):
+                continue
+            if out is None or v > out:
+                out = v
+    return out
+
+
+def _unit_model_bounds(entry: dict) -> tuple[int, int]:
+    """(base_models, max_models) depuis le groupe de composition d'escouade de
+    l'unité. base_models = taille mini (scaling points/figurine) ; max_models =
+    taille maxi (borne l'input). Les unités mono-figurine (persos/véhicules)
+    renvoient (1, 1)."""
+    gmin = gmax = None
+    sub_sum = 0
+    sub_found = False
+    for g in (entry.get("selectionEntryGroups") or []):
+        if not isinstance(g, dict):
+            continue
+        has_model = any(isinstance(se, dict) and se.get("type") == "model"
+                        for se in (g.get("selectionEntries") or []))
+        if not has_model:
+            continue
+        m = _group_sel_bound(g, "min")
+        if m is not None:
+            gmin = m if gmin is None else max(gmin, m)
+        mx = _group_sel_bound(g, "max")
+        if mx is not None:
+            gmax = mx if gmax is None else max(gmax, mx)
+        for se in (g.get("selectionEntries") or []):
+            if isinstance(se, dict) and se.get("type") == "model":
+                ms = _min_selections(se)
+                if ms > 0:
+                    sub_found = True
+                    sub_sum += ms
+    base = gmin if gmin else (sub_sum if sub_found else 1)
+    maxm = gmax if gmax else base
+    return max(1, base), max(1, maxm, base)
+
+
 def _char_lookup(profile: dict, name: str) -> str:
     for c in (profile.get("characteristics") or []):
         if isinstance(c, dict) and c.get("name") == name:
@@ -129,6 +186,16 @@ class UnitCard:
         self.weapons: list[dict] = []            # {name,type,range,A,BS,WS,S,AP,D,abilities}
         self.transport: str | None = None
         self.aliases: list[str] = []             # other BSData ids that resolve to this unit
+        self.base_models: int = 1                # taille mini d'escouade (scaling points/figurine)
+        self.max_models: int = 1                 # taille maxi d'escouade (borne l'input modèles)
+
+    @property
+    def points_per_model(self) -> int:
+        """Coût par figurine : en 11e les points sont par figurine, BSData stocke
+        le coût de l'unité pour sa taille mini (base_models)."""
+        if self.points and self.base_models:
+            return round(self.points / self.base_models)
+        return self.points or 0
 
     def to_dict(self) -> dict:
         return {
@@ -136,6 +203,9 @@ class UnitCard:
             "name": self.name,
             "faction_file": self.faction_file,
             "points": self.points,
+            "points_per_model": self.points_per_model,
+            "base_models": self.base_models,
+            "max_models": self.max_models,
             "keywords": list(self.keywords),
             "categories": list(self.categories),
             "statline": dict(self.statline),
@@ -499,6 +569,7 @@ def _build_unit(entry: dict, faction_file: str, ctx: _Ctx) -> UnitCard | None:
     try:
         unit = UnitCard(entry.get("id", ""), entry.get("name", ""), faction_file)
         unit.points = _pts(entry.get("costs"))
+        unit.base_models, unit.max_models = _unit_model_bounds(entry)
 
         # Keywords / categories from categoryLinks (already carry "name").
         cats = []
@@ -819,7 +890,7 @@ def _enhancements_from_group(g: dict) -> list[dict]:
 
 _CACHE_PATH = Path(__file__).resolve().parent / "units_cache.json"
 # Bump when the cache schema/semantics change so a stale cache is rebuilt.
-_CACHE_VERSION = 3
+_CACHE_VERSION = 4
 _index_cache: dict[str, FactionData] | None = None
 
 
@@ -875,6 +946,8 @@ def _faction_from_dict(f: str, d: dict) -> FactionData:
     for u in d.get("units", []):
         uc = UnitCard(u.get("id", ""), u.get("name", ""), f)
         uc.points = u.get("points")
+        uc.base_models = u.get("base_models", 1)
+        uc.max_models = u.get("max_models", 1)
         uc.keywords = u.get("keywords", [])
         uc.categories = u.get("categories", [])
         uc.statline = u.get("statline", {})
