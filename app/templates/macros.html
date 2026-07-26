@@ -36,6 +36,9 @@
     {{ u.models_current }}/{{ u.models_total }} modèles · {{ u.points }} pts
     <button class="ghost small" onclick="UnitModal.open({{ u.id }})">détails</button>
   </div>
+  {% if u.enhancement %}
+  <div class="small enh-tag">✦ {{ u.enhancement.name }} <span class="muted">(+{{ u.enhancement.cost }} pts)</span></div>
+  {% endif %}
   <div class="small unit-ctrls" style="margin-top:4px; display:flex; gap:10px; flex-wrap:wrap; align-items:center">
     <label class="small">Shock
       <input type="checkbox" class="shock-toggle" data-unit="{{ u.id }}" {{ 'checked' if u.battle_shocked else '' }}>

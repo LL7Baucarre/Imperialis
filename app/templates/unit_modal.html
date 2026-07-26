@@ -17,6 +17,11 @@
     {% if u.half_strength %} · <span class="half">DEMI-EFFECTIF</span>{% endif %}
     {% if u.battle_shocked %} · <span class="pill" style="background:#7f1d1d">SHOCK</span>{% endif %}
   </p>
+  {% if u.enhancement %}
+  <p class="small enh-tag">✦ {{ u.enhancement.name }} <span class="muted">(+{{ u.enhancement.cost }} pts)</span>
+    {% if u.enhancement.text %}<br><span class="small">{{ u.enhancement.text | bsd }}</span>{% endif %}
+  </p>
+  {% endif %}
 
   <h3>Capacités</h3>
   <ul class="abil">

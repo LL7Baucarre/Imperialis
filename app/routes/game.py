@@ -117,11 +117,13 @@ def play(gid):
     active_faction = bsdata.get_faction(active_player["faction_file"]) if active_player.get("faction_file") else None
     opponent_faction = bsdata.get_faction(opponent_player["faction_file"]) if opponent_player.get("faction_file") else None
     # attach selected detachment to faction_data so phase_assist can surface its rule
+    active_detachment = None
     if active_faction is not None and active_player.get("detachment"):
         try:
             for d in (active_faction.detachments or []):
                 if (getattr(d, "name", None) or "") == active_player["detachment"]:
                     active_faction.selected_detachment = d
+                    active_detachment = d
                     break
         except Exception:
             pass
@@ -165,6 +167,7 @@ def play(gid):
         "play.html", g=g, players=players, units=units, missions=m,
         phase=phase, phase_data=phase_data, assist=assist,
         active_seat=active_seat, active_player=active_player,
+        active_detachment=(active_detachment.to_dict() if active_detachment else None),
         p1_img=p1_img, p2_img=p2_img,
         p1_text=p1_text, p2_text=p2_text,
         sec_att_text=sec_att_text, sec_def_text=sec_def_text,
@@ -250,4 +253,9 @@ def unit_modal(gid, unit_id):
     u["abilities"] = json.loads(u["abilities_json"] or "[]")
     u["weapons"] = json.loads(u["weapons_json"] or "[]")
     u["half_strength"] = (u["models_current"] <= u["models_total"] / 2) if u["models_total"] else False
+    u["enhancement"] = (
+        {"name": u["enhancement_name"], "cost": u.get("enhancement_cost") or 0,
+         "text": u.get("enhancement_text") or ""}
+        if u.get("enhancement_name") else None
+    )
     return render_template("unit_modal.html", u=u)

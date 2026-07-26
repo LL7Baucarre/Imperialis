@@ -128,6 +128,7 @@ def roster(gid, seat):
     detachments = []
     if faction_data:
         detachments = [d.to_dict() for d in faction_data.detachments]
+    active_detachment = next((d for d in detachments if d["name"] == player.get("detachment")), None)
 
     # BSData donne les points pour l'unité ; on somme les points des unités du roster
     roster_units = units.get(seat, [])
@@ -137,12 +138,14 @@ def roster(gid, seat):
         roster_units, points_limit=points_limit,
         detachment=player.get("detachment"),
     )
+    taken_enhancements = {u["enhancement"]["name"] for u in roster_units if u.get("enhancement")}
 
     return render_template(
         "setup_roster.html", g=g, seat=seat, other_seat=other_seat,
         player=player, factions=factions, faction_file=faction_file,
         faction_name=friendly_faction_name(faction_file, player.get("faction_name")),
         faction_data=faction_data, detachments=detachments,
+        active_detachment=active_detachment, taken_enhancements=taken_enhancements,
         units_browser=units_browser, groups=ordered_groups, group_options=GROUP_DISPLAY,
         search=search, category=category, roster=roster_units, total_pts=total_pts,
         points_limit=points_limit, issues=issues,
@@ -208,6 +211,51 @@ def remove_unit_route(gid, unit_id):
         p = get_db().execute("SELECT seat FROM players WHERE id=?", (row["player_id"],)).fetchone()
         if p:
             seat = p["seat"]
+    return redirect(url_for("setup.roster", gid=gid, seat=seat))
+
+
+@bp.route("/setup/<int:gid>/unit/enhancement/<int:seat>/<int:unit_id>", methods=["POST"])
+def set_unit_enhancement_route(gid, seat, unit_id):
+    """Assigne (ou retire) un Enhancement du détachement actif à une unité
+    Character du roster. En 11e, un Enhancement donné n'est utilisable qu'une
+    fois par armée — on l'impose ici plutôt que de le faire vérifier au
+    joueur."""
+    if seat not in (1, 2):
+        abort(404)
+    g = get_game_or_404(gid)
+    _, players, units = game_context(gid)
+    player = players[seat]
+
+    row = get_db().execute("SELECT player_id, categories_json FROM units WHERE id=?", (unit_id,)).fetchone()
+    if not row or row["player_id"] != player["id"]:
+        abort(404)
+
+    enh_name = (request.form.get("enhancement") or "").strip()
+    if not enh_name:
+        models.clear_unit_enhancement(unit_id)
+        return redirect(url_for("setup.roster", gid=gid, seat=seat))
+
+    categories = json.loads(row["categories_json"] or "[]")
+    if "Character" not in categories:
+        flash("Seul un Personnage (Character) peut recevoir un Enhancement.", "error")
+        return redirect(url_for("setup.roster", gid=gid, seat=seat))
+
+    faction_data = bsdata.get_faction(player["faction_file"]) if player.get("faction_file") else None
+    det = next((d for d in (faction_data.detachments if faction_data else [])
+                if d.name == player.get("detachment")), None)
+    enh = next((e for e in (det.enhancements if det else []) if e["name"] == enh_name), None)
+    if not enh:
+        abort(400)
+
+    # Un Enhancement donné : un seul exemplaire par armée.
+    already = next((u for u in units.get(seat, [])
+                    if u["id"] != unit_id and (u.get("enhancement") or {}).get("name") == enh_name), None)
+    if already:
+        flash(f"« {enh_name} » est déjà pris par « {already.get('custom_name') or already['name']} » "
+              f"— un seul exemplaire par armée.", "error")
+        return redirect(url_for("setup.roster", gid=gid, seat=seat))
+
+    models.set_unit_enhancement(unit_id, enh["name"], cost=enh.get("cost") or 0, text=enh.get("text") or "")
     return redirect(url_for("setup.roster", gid=gid, seat=seat))
 
 

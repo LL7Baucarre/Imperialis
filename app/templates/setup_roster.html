@@ -109,6 +109,23 @@
         <div class="unit">
           <div class="uname">{{ u.custom_name or u.name }} <span class="small muted">· {{ u.points }} pts · {{ u.models_total }} mod.</span></div>
           <div class="small muted">{{ (u.categories or []) | join(', ') }}</div>
+          {% if u.enhancement %}
+          <div class="small enh-tag">✦ {{ u.enhancement.name }} <span class="muted">(+{{ u.enhancement.cost }} pts)</span></div>
+          {% endif %}
+          {% if 'Character' in (u.categories or []) and active_detachment and active_detachment.enhancements %}
+          <form method="post" action="{{ url_for('setup.set_unit_enhancement_route', gid=g.id, seat=seat, unit_id=u.id) }}" style="margin-top:4px">
+            <select name="enhancement" onchange="this.form.submit()" style="width:100%;padding:4px;font-size:.8rem">
+              <option value="">— Enhancement —</option>
+              {% for e in active_detachment.enhancements %}
+                <option value="{{ e.name }}"
+                  {{ 'selected' if u.enhancement and u.enhancement.name==e.name else '' }}
+                  {{ 'disabled' if e.name in taken_enhancements and not (u.enhancement and u.enhancement.name==e.name) else '' }}>
+                  {{ e.name }} ({{ e.cost }} pts){% if e.name in taken_enhancements and not (u.enhancement and u.enhancement.name==e.name) %} — pris{% endif %}
+                </option>
+              {% endfor %}
+            </select>
+          </form>
+          {% endif %}
           <form method="post" action="{{ url_for('setup.remove_unit_route', gid=g.id, unit_id=u.id) }}" style="margin-top:4px">
             <button class="danger small">Retirer</button>
           </form>
@@ -118,6 +135,27 @@
         <p class="muted small">Roster vide — ajoute des unités depuis la gauche, ou importe une armée ci-dessous.</p>
       {% endif %}
     </div>
+
+    {% if active_detachment %}
+    <div class="card">
+      <h2>{{ active_detachment.name }} <span class="small muted">— détachement actif</span></h2>
+      {% if active_detachment.rule %}<div class="small" style="margin-bottom:8px">{{ active_detachment.rule | bsd }}</div>{% endif %}
+      {% if active_detachment.enhancements %}
+      <div class="small"><b>Enhancements ({{ active_detachment.enhancements|length }}) :</b>
+        <ul class="abil">
+          {% for e in active_detachment.enhancements %}
+          <li>
+            <b>{{ e.name }}</b> ({{ e.cost }} pts){% if e.name in taken_enhancements %} <span class="pill" style="font-size:.65rem">pris</span>{% endif %}
+            — <span class="small">{{ (e.text or '') | bsd }}</span>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% else %}
+      <p class="muted small">Aucun Enhancement listé pour ce détachement dans BSData.</p>
+      {% endif %}
+    </div>
+    {% endif %}
 
     <div class="card">
       <h2>Importer une armée</h2>

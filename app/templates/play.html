@@ -58,6 +58,22 @@
       </div>
       {% endif %}
 
+      {% if active_detachment and active_detachment.enhancements %}
+      <div class="det-rule">
+        <div class="small"><b>Enhancements</b> — {{ active_detachment.name }}</div>
+        <ul class="abil">
+          {% for e in active_detachment.enhancements %}
+          {% set holder = (units[active_seat] | selectattr('enhancement') | selectattr('enhancement.name', 'equalto', e.name) | first) %}
+          <li>
+            <b>{{ e.name }}</b> ({{ e.cost }} pts)
+            {% if holder %}<span class="pill" style="font-size:.65rem">{{ holder.custom_name or holder.name }}</span>{% endif %}
+            — <span class="small">{{ (e.text or '') | bsd }}</span>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+
       {% if phase == 'Command' %}
       <div class="bs-tool">
         <h3 style="margin-top:10px">🧠 Test de Battle Shock</h3>

@@ -130,10 +130,11 @@ button:disabled { opacity: .5; cursor: not-allowed; }
   color: var(--accent); margin: 10px 0 4px; border-bottom: 1px solid var(--line); padding-bottom: 2px; }
 .uname-link { color: var(--accent); text-decoration: none; cursor: pointer; }
 .uname-link:hover { text-decoration: underline; }
-.unit ul.abil { margin: 4px 0; padding-left: 18px; }
-.unit ul.abil li { font-size: .8rem; margin-bottom: 4px; }
-.unit ul.abil b { color: var(--accent); }
+.unit ul.abil, ul.abil { margin: 4px 0; padding-left: 18px; }
+.unit ul.abil li, ul.abil li { font-size: .8rem; margin-bottom: 4px; }
+.unit ul.abil b, ul.abil b { color: var(--accent); }
 .weapons { font-size: .78rem; }
+.enh-tag { color: var(--accent); font-weight: 600; margin-top: 2px; }
 
 /* Modal */
 .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 50; padding: 30px; overflow:auto; }

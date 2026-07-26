@@ -48,7 +48,10 @@ CREATE TABLE IF NOT EXISTS units (
     categories_json  TEXT NOT NULL DEFAULT '[]',
     stats_json       TEXT NOT NULL DEFAULT '{}',
     abilities_json   TEXT NOT NULL DEFAULT '[]',
-    weapons_json     TEXT NOT NULL DEFAULT '[]'
+    weapons_json     TEXT NOT NULL DEFAULT '[]',
+    enhancement_name TEXT,
+    enhancement_cost INTEGER NOT NULL DEFAULT 0,
+    enhancement_text TEXT
 );
 
 CREATE TABLE IF NOT EXISTS game_missions (
@@ -315,6 +318,11 @@ def get_units(player_id):
         d["wounds_current"] = d.get("wounds_current") if d.get("wounds_current") is not None else d["wounds_total"]
         d["pos_x"] = d.get("pos_x")
         d["pos_y"] = d.get("pos_y")
+        d["enhancement"] = (
+            {"name": d["enhancement_name"], "cost": d.get("enhancement_cost") or 0,
+             "text": d.get("enhancement_text") or ""}
+            if d.get("enhancement_name") else None
+        )
         out.append(d)
     return out
 
@@ -322,6 +330,36 @@ def get_units(player_id):
 def remove_unit(unit_id):
     get_db().execute("DELETE FROM units WHERE id=?", (unit_id,))
     get_db().commit()
+
+
+def set_unit_enhancement(unit_id, name, cost=0, text=""):
+    """Assigne un Enhancement à une unité. Le coût est ajouté au champ
+    ``points`` de l'unité (en retirant l'ancien coût s'il y en avait un), pour
+    que tous les totaux (roster, export, validateur) restent corrects sans
+    traitement spécial."""
+    db = get_db()
+    row = db.execute("SELECT points, enhancement_cost FROM units WHERE id=?", (unit_id,)).fetchone()
+    if not row:
+        return
+    new_points = int(row["points"]) - int(row["enhancement_cost"] or 0) + int(cost or 0)
+    db.execute(
+        "UPDATE units SET enhancement_name=?, enhancement_cost=?, enhancement_text=?, points=? WHERE id=?",
+        (name, int(cost or 0), text or "", new_points, unit_id),
+    )
+    db.commit()
+
+
+def clear_unit_enhancement(unit_id):
+    db = get_db()
+    row = db.execute("SELECT points, enhancement_cost FROM units WHERE id=?", (unit_id,)).fetchone()
+    if not row:
+        return
+    new_points = int(row["points"]) - int(row["enhancement_cost"] or 0)
+    db.execute(
+        "UPDATE units SET enhancement_name=NULL, enhancement_cost=0, enhancement_text=NULL, points=? WHERE id=?",
+        (new_points, unit_id),
+    )
+    db.commit()
 
 
 def set_unit_models(unit_id, current):
