@@ -9,6 +9,19 @@
 </div>
 {% endmacro %}
 
+{# Pills catégories/mots-clés d'une unité (rôle 11e en accent, mots-clés en
+   neutre, faction discrète — voir helpers.unit_category_display) #}
+{% macro category_tags(u_name, categories) %}
+{% set roles, keywords, faction = unit_category_display(u_name, categories) %}
+{% if roles or keywords or faction %}
+<div class="cat-tags">
+  {% for c in roles %}<span class="cat-tag role">{{ c }}</span>{% endfor %}
+  {% for c in keywords %}<span class="cat-tag kw">{{ c }}</span>{% endfor %}
+  {% for c in faction %}<span class="cat-tag faction">{{ c }}</span>{% endfor %}
+</div>
+{% endif %}
+{% endmacro %}
+
 {# Tableau de statline #}
 {% macro statline(stats) %}
 {% if stats %}

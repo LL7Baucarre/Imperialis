@@ -33,6 +33,45 @@ def clean_bsdata(text):
     return Markup(s)
 
 
+# ---------------------------------------------------------------------------
+# Affichage des catégories/mots-clés BSData d'une unité
+# ---------------------------------------------------------------------------
+# BSData mélange dans ``categories`` le rôle d'armée (Character, Infantry…),
+# des mots-clés de jeu utiles (Psyker, Terminator, Leader…), la faction/le
+# camp (Imperium, Faction: Grey Knights…) et du bruit pur : la catégorie
+# reprend souvent le nom même de l'unité (ex. « Brother-Captain Stern » pour
+# l'unité du même nom), qu'on retire à l'affichage.
+ROSTER_ROLES = {"Epic Hero", "Character", "Battleline", "Infantry", "Mounted",
+                "Vehicle", "Dedicated Transport", "Fortification"}
+
+
+def unit_category_display(u_name, categories):
+    """Découpe ``categories`` (liste brute BSData) en (roles, keywords, faction)
+    pour un affichage en trois groupes visuellement distincts :
+
+    - ``roles``    : rôle(s) d'armée 11e (Character, Infantry…)
+    - ``keywords``: mots-clés de jeu (Psyker, Terminator, Leader, Fly…)
+    - ``faction`` : appartenance (Imperium, Faction: Grey Knights…), la plus
+      discrète car déjà connue du joueur (c'est son armée)
+
+    Le nom de l'unité, quand il apparaît comme catégorie (bruit BSData), est
+    filtré des trois groupes.
+    """
+    name_norm = (u_name or "").replace("[Legends]", "").strip().lower()
+    roles, keywords, faction = [], [], []
+    for c in categories or []:
+        if not c or c.strip().lower() == name_norm:
+            continue
+        if c in ROSTER_ROLES:
+            roles.append(c)
+        elif c.startswith("Faction:") or c in ("Imperium", "Chaos", "Aeldari", "Necrons",
+                                                "Tyranids", "Orks", "T'au Empire"):
+            faction.append(c)
+        else:
+            keywords.append(c)
+    return roles, keywords, faction
+
+
 def plain_bsdata(text):
     """Version texte plat (sans balises) pour attributs/titres."""
     if not text:

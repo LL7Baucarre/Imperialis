@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "macros.html" import statline %}
+{% from "macros.html" import statline, category_tags %}
 {% block title %}Roster J{{ seat }} — {{ g.name }}{% endblock %}
 {% block heading %}<span class="pill p{{ seat }}">Joueur {{ seat }}</span> Roster{% endblock %}
 {% block content %}
@@ -56,7 +56,8 @@
                 <a href="javascript:void(0)" class="uname-link" onclick="CardModal.open({{ u.id|tojson|forceescape }})">{{ u.name }}</a>
                 <span class="small muted">· {{ u.points }} pts · {{ u.points_per_model }}/fig.</span>
               </div>
-              <div class="small muted">{{ (u.categories or []) | join(', ') }} · {{ u.base_models }}–{{ u.max_models }} mod.</div>
+              {{ category_tags(u.name, u.categories) }}
+              <div class="small muted">{{ u.base_models }}–{{ u.max_models }} mod.</div>
               {{ statline(u.statline) }}
               <div style="margin-top:4px">
                 <label class="small">Modèles: <input type="number" name="models" value="{{ u.base_models }}" min="1" max="{{ u.max_models }}" style="width:56px"></label>
@@ -108,7 +109,7 @@
         {% for u in roster %}
         <div class="unit">
           <div class="uname">{{ u.custom_name or u.name }} <span class="small muted">· {{ u.points }} pts · {{ u.models_total }} mod.</span></div>
-          <div class="small muted">{{ (u.categories or []) | join(', ') }}</div>
+          {{ category_tags(u.name, u.categories) }}
           {% if u.enhancement %}
           <div class="small enh-tag">✦ {{ u.enhancement.name }} <span class="muted">(+{{ u.enhancement.cost }} pts)</span></div>
           {% endif %}

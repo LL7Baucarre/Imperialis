@@ -249,6 +249,7 @@ def unit_modal(gid, unit_id):
     import json
     u = dict(row)
     u["keywords"] = json.loads(u["keywords_json"] or "[]")
+    u["categories"] = json.loads(u.get("categories_json") or "[]")
     u["stats"] = json.loads(u["stats_json"] or "{}")
     u["abilities"] = json.loads(u["abilities_json"] or "[]")
     u["weapons"] = json.loads(u["weapons_json"] or "[]")

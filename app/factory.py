@@ -25,9 +25,10 @@ def create_app():
     app.teardown_appcontext(close_db)
 
     # Filtres Jinja pour le markup BSData
-    from app.helpers import clean_bsdata, plain_bsdata, playable_factions
+    from app.helpers import clean_bsdata, plain_bsdata, playable_factions, unit_category_display
     app.jinja_env.filters["bsd"] = clean_bsdata
     app.jinja_env.filters["plain"] = plain_bsdata
+    app.jinja_env.globals["unit_category_display"] = unit_category_display
 
     # Context processor global (données communes aux templates)
     from app.auth import auth_enabled, is_authed

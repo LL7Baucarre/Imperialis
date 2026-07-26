@@ -162,9 +162,14 @@ def set_faction(gid, seat):
     detachment = request.form.get("detachment") or None
     if faction_file and any(f["file"] == faction_file for f in playable_factions()):
         fname = friendly_faction_name(faction_file)
-        # reset du roster si on change de faction
+        # Le select faction soumet via onchange avant que la page ne se
+        # recharge : le select détachement du POST porte encore les options
+        # (et la valeur choisie) de l'ANCIENNE faction. Un changement de
+        # faction doit donc toujours repartir sans détachement plutôt que de
+        # persister un nom invalide pour la nouvelle faction.
         if player.get("faction_file") and player.get("faction_file") != faction_file:
             get_db().execute("DELETE FROM units WHERE player_id=?", (player["id"],))
+            detachment = None
         models.set_player_faction(player["id"], faction_file, fname, detachment)
         get_db().commit()
     return redirect(url_for("setup.roster", gid=gid, seat=seat))

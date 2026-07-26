@@ -1,9 +1,16 @@
+{% set roles, keywords, faction = unit_category_display(u.name, u.categories) %}
 <div>
   <div class="row" style="align-items:center">
     <h2 style="flex:1">{{ u.custom_name or u.name }}</h2>
     <button class="ghost" onclick="this.closest('.modal').classList.remove('open')">✕</button>
   </div>
-  <div class="small muted">{{ (u.keywords or []) | join(', ') }}</div>
+  {% if roles or keywords or faction %}
+  <div class="cat-tags">
+    {% for c in roles %}<span class="cat-tag role">{{ c }}</span>{% endfor %}
+    {% for c in keywords %}<span class="cat-tag kw">{{ c }}</span>{% endfor %}
+    {% for c in faction %}<span class="cat-tag faction">{{ c }}</span>{% endfor %}
+  </div>
+  {% endif %}
 
   {% set s = u.stats %}
   {% if s %}

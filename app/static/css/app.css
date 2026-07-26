@@ -136,6 +136,14 @@ button:disabled { opacity: .5; cursor: not-allowed; }
 .weapons { font-size: .78rem; }
 .enh-tag { color: var(--accent); font-weight: 600; margin-top: 2px; }
 
+/* Catégories/mots-clés d'unité (pills groupées : rôle / mot-clé / faction) */
+.cat-tags { display: flex; flex-wrap: wrap; gap: 4px; margin: 4px 0; }
+.cat-tag { display: inline-block; padding: 1px 7px; border-radius: 999px; font-size: .68rem;
+  font-weight: 600; line-height: 1.6; white-space: nowrap; }
+.cat-tag.role { background: rgba(212,175,55,.16); color: var(--accent); border: 1px solid rgba(212,175,55,.4); }
+.cat-tag.kw { background: rgba(154,160,173,.12); color: var(--ink); border: 1px solid var(--line); }
+.cat-tag.faction { background: transparent; color: var(--muted); border: 1px solid transparent; font-weight: 400; }
+
 /* Modal */
 .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 50; padding: 30px; overflow:auto; }
 .modal.open { display: block; }

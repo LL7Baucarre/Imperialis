@@ -818,9 +818,11 @@ def _build_faction(file: str) -> FactionData | None:
                 groups.append(g)
                 seen_gnames.add(g.get("name") or "")
 
-    # Detachments: groups named "Detachment".
+    # Detachments: groups named "Detachment" or "Detachments" (BSData isn't
+    # consistent — Space Marines/Orks/Tau/Tyranids use the singular, Grey
+    # Knights/Adeptus Mechanicus/Aeldari the plural).
     for g in groups:
-        if (g.get("name") or "") != "Detachment":
+        if (g.get("name") or "") not in ("Detachment", "Detachments"):
             continue
         for se in (g.get("selectionEntries") or []):
             if isinstance(se, dict):
@@ -890,7 +892,7 @@ def _enhancements_from_group(g: dict) -> list[dict]:
 
 _CACHE_PATH = Path(__file__).resolve().parent / "units_cache.json"
 # Bump when the cache schema/semantics change so a stale cache is rebuilt.
-_CACHE_VERSION = 4
+_CACHE_VERSION = 5
 _index_cache: dict[str, FactionData] | None = None
 
 
