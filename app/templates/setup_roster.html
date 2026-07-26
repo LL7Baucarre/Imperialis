@@ -19,7 +19,7 @@
         </select>
         {% if detachments %}
         <label class="small" style="margin-top:6px">Détachement</label>
-        <select name="detachment" style="width:100%;padding:6px">
+        <select name="detachment" onchange="this.form.submit()" style="width:100%;padding:6px">
           <option value="">— Aucun —</option>
           {% for d in detachments %}
             <option value="{{ d.name }}" {{ 'selected' if d.name==player.detachment else '' }}>{{ d.name }}</option>
