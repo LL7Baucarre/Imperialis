@@ -27,3 +27,8 @@ MAX_ROUNDS = 5
 PHASES = ["Command", "Movement", "Shooting", "Charge", "Fight"]
 
 SECRET_KEY = os.environ.get("IMPERIALIS_SECRET_KEY", "dev-secret-change-me")
+
+# Passphrase d'accès à toute l'app (prod). Vide -> pas d'auth (dev local).
+# Sert aussi à gating des PDF de codex (/codex/<file>) pour éviter la redistribution
+# publique de matériel copyrighté Games Workshop.
+APP_PASSPHRASE = os.environ.get("IMPERIALIS_PASSPHRASE", "")

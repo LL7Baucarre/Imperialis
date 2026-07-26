@@ -30,13 +30,21 @@ def create_app():
     app.jinja_env.filters["plain"] = plain_bsdata
 
     # Context processor global (données communes aux templates)
+    from app.auth import auth_enabled, is_authed
     @app.context_processor
     def inject_globals():
         return {
             "PHASES": cfg.PHASES,
             "MAX_ROUNDS": cfg.MAX_ROUNDS,
             "playable_factions": playable_factions,
+            "auth_enabled": auth_enabled(),
+            "authed": is_authed(),
         }
+
+    # Authentification par passphrase (gating toute l'app + codex PDF)
+    from app.auth import bp as auth_bp, enforce_auth
+    app.register_blueprint(auth_bp)
+    app.before_request(enforce_auth)
 
     # Enregistrement des blueprints (chargement différé, tolérant)
     from app.routes import setup as setup_bp

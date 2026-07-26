@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Connexion{% endblock %}
+{% block heading %}Connexion{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width:380px;margin:48px auto">
+  <h2>🔒 Imperialis</h2>
+  <p class="small muted">Assistant de partie Warhammer 40k 11e édition. Saisis la passphrase pour accéder à l'application.</p>
+  <form method="post" action="{{ url_for('auth.login') }}{% if request.args.get('next') %}?next={{ request.args.get('next') }}{% endif %}">
+    <input type="password" name="passphrase" placeholder="Passphrase" autofocus required
+           style="width:100%;padding:10px;margin:8px 0;box-sizing:border-box">
+    {% if err %}<div class="small" style="color:#e11;margin-bottom:6px">⚠️ {{ err }}</div>{% endif %}
+    <button class="primary" type="submit" style="width:100%">Entrer</button>
+  </form>
+</div>
+{% endblock %}

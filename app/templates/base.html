@@ -24,6 +24,7 @@
           <a href="{{ url_for('game.tracker', gid=g.id) }}">Résumé VP</a>
         {% endif %}
       {% endif %}
+      {% if auth_enabled and authed %}<a href="{{ url_for('auth.logout') }}">Déconnexion</a>{% endif %}
     </nav>
   </div>
 </header>
