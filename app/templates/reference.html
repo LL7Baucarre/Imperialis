@@ -16,7 +16,7 @@
 <div class="card">
   <h2>Détachements ({{ detachments|length }})</h2>
   {% for d in detachments %}
-  <details class="unit" translate="no">
+  <details class="unit">
     <summary><b>{{ d.name }}</b></summary>
     <div class="small" style="margin:6px 0">{{ (d.rule or '') | bsd }}</div>
     {% if d.stratagems %}
@@ -38,7 +38,7 @@
 <div class="card">
   <h2>Capacités / traits de faction ({{ faction_abilities|length }})</h2>
   <details class="unit"><summary>Afficher…</summary>
-    <ul class="abil" translate="no">
+    <ul class="abil">
     {% for a in faction_abilities %}
       <li><b>{{ a.name }}</b> — <span class="small">{{ (a.description or '') | bsd }}</span></li>
     {% endfor %}
