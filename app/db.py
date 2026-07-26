@@ -38,6 +38,8 @@ def init_db(db_path):
         ("units", "enhancement_name", "TEXT"),
         ("units", "enhancement_cost", "INTEGER NOT NULL DEFAULT 0"),
         ("units", "enhancement_text", "TEXT"),
+        ("games", "game_mode", "TEXT NOT NULL DEFAULT 'standard'"),
+        ("games", "combat_patrol_mission", "TEXT"),
     ]
     for table, column, ddl in migrations:
         cols = {row[1] for row in con.execute(f"PRAGMA table_info({table})").fetchall()}

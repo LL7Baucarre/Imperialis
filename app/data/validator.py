@@ -41,11 +41,15 @@ def _is_transport(u: dict) -> bool:
 
 
 def validate_roster(units: list[dict], points_limit: int = 2000,
-                    detachment: str | None = None) -> list[dict]:
+                    detachment: str | None = None,
+                    game_mode: str = "standard") -> list[dict]:
     """Return a list of issue dicts: ``{severity, message}``.
 
     ``units`` items are the dicts from ``models.get_units`` (with ``name``,
-    ``points``, ``categories``, ``models_total``...).
+    ``points``, ``categories``, ``models_total``...). ``game_mode`` is
+    ``'standard'`` (points-built army) or ``'combat_patrol'`` (Patrouille : la
+    composition vient d'une Patrouille à effectif fixe, pas d'un budget de
+    points — le contrôle de budget est donc désactivé dans ce mode).
     """
     issues: list[dict] = []
 
@@ -54,9 +58,13 @@ def validate_roster(units: list[dict], points_limit: int = 2000,
                        "message": "Roster vide — ajoute au moins une unité."})
         return issues
 
-    # --- Points ---
+    # --- Points --- (mode Patrouille : pas de budget de points à respecter)
     total = sum(int(u.get("points") or 0) for u in units)
-    if total > points_limit:
+    if game_mode == "combat_patrol":
+        issues.append({"severity": "info",
+                       "message": f"Mode Patrouille : {total} pts au total — "
+                                  f"pas de budget de points à respecter."})
+    elif total > points_limit:
         issues.append({
             "severity": "error",
             "message": f"Dépasse le budget : {total} pts > limite {points_limit} pts "
@@ -72,55 +80,58 @@ def validate_roster(units: list[dict], points_limit: int = 2000,
         issues.append({"severity": "info",
                        "message": f"Budget utilisé : {total} / {points_limit} pts."})
 
-    # --- Detachment ---
-    if not detachment:
+    # --- Detachment --- (une Patrouille n'utilise pas de détachement)
+    if game_mode != "combat_patrol" and not detachment:
         issues.append({"severity": "warning",
                        "message": "Aucun détachement sélectionné — un détachement "
                                   "est requis en 11e (il définit tes règles et "
                                   "stratagems)."})
 
-    # --- Unit duplication limits (11e army composition) ---
-    # Group by canonical name; Epic Heroes are also tracked individually.
-    name_counts: Counter = Counter(u.get("name") or "" for u in units)
-    epic_names: set[str] = set()
+    # --- Unit duplication limits (11e army composition) --- (non applicable
+    # en Patrouille : la composition vient d'une liste fixe, pas de plafonds
+    # de duplication par nom d'unité).
+    if game_mode != "combat_patrol":
+        # Group by canonical name; Epic Heroes are also tracked individually.
+        name_counts: Counter = Counter(u.get("name") or "" for u in units)
+        epic_names: set[str] = set()
 
-    for u in units:
-        name = u.get("name") or ""
-        if _is_epic_hero(u):
-            epic_names.add(name)
-            if name_counts[name] > 1:
+        for u in units:
+            name = u.get("name") or ""
+            if _is_epic_hero(u):
+                epic_names.add(name)
+                if name_counts[name] > 1:
+                    issues.append({
+                        "severity": "error",
+                        "message": f"« {name} » est un Epic Hero : une seule "
+                                   f"exemplaire autorisée (×{name_counts[name]}).",
+                    })
+
+        # For non-epic units, enforce the per-name cap (6 for Battleline, 3
+        # otherwise). Report each name that exceeds once.
+        reported: set[str] = set()
+        for name, count in name_counts.items():
+            if not name or name in epic_names or name in reported:
+                continue
+            reported.add(name)
+            # Find a representative unit to know if it's Battleline/Transport.
+            rep = next((u for u in units if (u.get("name") or "") == name), None)
+            if rep is None:
+                continue
+            if _is_battleline(rep):
+                cap = 6
+                label = "Battleline"
+            elif _is_transport(rep):
+                cap = 3
+                label = "Dedicated Transport"
+            else:
+                cap = 3
+                label = "unité"
+            if count > cap:
                 issues.append({
                     "severity": "error",
-                    "message": f"« {name} » est un Epic Hero : une seule "
-                               f"exemplaire autorisée (×{name_counts[name]}).",
+                    "message": f"« {name} » : maximum {cap} ({label}) en 11e — "
+                               f"tu en as {count}.",
                 })
-
-    # For non-epic units, enforce the per-name cap (6 for Battleline, 3
-    # otherwise). Report each name that exceeds once.
-    reported: set[str] = set()
-    for name, count in name_counts.items():
-        if not name or name in epic_names or name in reported:
-            continue
-        reported.add(name)
-        # Find a representative unit to know if it's Battleline/Transport.
-        rep = next((u for u in units if (u.get("name") or "") == name), None)
-        if rep is None:
-            continue
-        if _is_battleline(rep):
-            cap = 6
-            label = "Battleline"
-        elif _is_transport(rep):
-            cap = 3
-            label = "Dedicated Transport"
-        else:
-            cap = 3
-            label = "unité"
-        if count > cap:
-            issues.append({
-                "severity": "error",
-                "message": f"« {name} » : maximum {cap} ({label}) en 11e — "
-                           f"tu en as {count}.",
-            })
 
     # --- Character / Warlord hint ---
     characters = [u for u in units if "Character" in _cats(u)]

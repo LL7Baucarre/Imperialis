@@ -13,6 +13,7 @@ from app.helpers import (
 from app.data import bsdata, missions as M
 from app.data import importer as IMP
 from app.data import validator as VAL
+from app.data import combat_patrol as CP
 
 bp = Blueprint("setup", __name__)
 
@@ -82,13 +83,17 @@ def setup_hub(gid):
         "done_p2": bool(p2.get("faction_file")) and len(units.get(2, [])) > 0,
     }
     m = models.get_missions(gid)
-    step2 = {"done": bool(m and (m.get("force_disposition_p1") or m.get("primary_card_p1")))}
+    if g["game_mode"] == "combat_patrol":
+        has_mission = bool(g["combat_patrol_mission"])
+    else:
+        has_mission = bool(m and (m.get("force_disposition_p1") or m.get("primary_card_p1")))
+    step2 = {"done": has_mission}
     ready = step1["done_p1"] and step1["done_p2"]
     step3 = {"done": ready and step2["done"]}
 
     return render_template("setup_hub.html", g=g, players=players, units=units,
                            ready=ready, step1=step1, step2=step2, step3=step3,
-                           has_mission=bool(m and (m.get("force_disposition_p1") or m.get("primary_card_p1"))))
+                           has_mission=has_mission)
 
 
 # ---------------------------------------------------------------------------
@@ -137,6 +142,7 @@ def roster(gid, seat):
     issues = VAL.validate_roster(
         roster_units, points_limit=points_limit,
         detachment=player.get("detachment"),
+        game_mode=g["game_mode"],
     )
     taken_enhancements = {u["enhancement"]["name"] for u in roster_units if u.get("enhancement")}
 
@@ -401,6 +407,38 @@ def unit_card(gid, seat, unit_id):
         "half_strength": False, "battle_shocked": False,
     }
     return render_template("unit_modal.html", u=data)
+
+
+# ---------------------------------------------------------------------------
+# Mode de jeu (Standard / Patrouille)
+# ---------------------------------------------------------------------------
+@bp.route("/setup/<int:gid>/mode", methods=["POST"])
+def set_game_mode_route(gid):
+    get_game_or_404(gid)
+    mode = request.form.get("game_mode") or "standard"
+    models.set_game_mode(gid, mode)
+    if mode == "combat_patrol":
+        return redirect(url_for("setup.combat_patrol_mission", gid=gid))
+    return redirect(url_for("setup.setup_hub", gid=gid))
+
+
+# ---------------------------------------------------------------------------
+# Choix de mission — Patrouille (Combat Patrol)
+# ---------------------------------------------------------------------------
+@bp.route("/setup/<int:gid>/combat-patrol", methods=["GET", "POST"])
+def combat_patrol_mission(gid):
+    g = get_game_or_404(gid)
+    if request.method == "POST":
+        name = request.form.get("mission_name") or None
+        if name and CP.get_mission(name):
+            models.set_combat_patrol_mission(gid, name)
+        return redirect(url_for("setup.setup_hub", gid=gid))
+    return render_template(
+        "setup_combat_patrol.html", g=g,
+        missions=CP.MISSIONS, sequence=CP.SEQUENCE_STEPS,
+        secure_rule=CP.SECURE_OBJECTIVES_RULE, battlefield_size=CP.BATTLEFIELD_SIZE,
+        current=g["combat_patrol_mission"],
+    )
 
 
 # ---------------------------------------------------------------------------

@@ -6,6 +6,7 @@ from app.db import get_db
 from app.helpers import get_game_or_404, game_context, friendly_faction_name, codex_pdf_for_faction
 from app.data import bsdata, phases as P, missions as M
 from app.data import combat as COMBAT
+from app.data import combat_patrol as CP
 
 bp = Blueprint("game", __name__)
 
@@ -163,6 +164,8 @@ def play(gid):
     # Flat unit list for the resolver encart (client-side).
     units_json = _flat_units(units)
 
+    cp_mission = CP.get_mission(g["combat_patrol_mission"]) if g["game_mode"] == "combat_patrol" else None
+
     return render_template(
         "play.html", g=g, players=players, units=units, missions=m,
         phase=phase, phase_data=phase_data, assist=assist,
@@ -176,6 +179,8 @@ def play(gid):
         annotations=annotations, vp_hist=vp_hist,
         wound_table=P.WOUND_TABLE, pregame=P.PREGAME_STEPS,
         units_json=units_json,
+        cp_mission=cp_mission, cp_secure_rule=CP.SECURE_OBJECTIVES_RULE,
+        cp_battlefield_size=CP.BATTLEFIELD_SIZE,
     )
 
 

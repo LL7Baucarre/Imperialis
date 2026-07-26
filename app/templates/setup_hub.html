@@ -64,10 +64,37 @@
 </div>
 
 <div class="card">
+  <h2>Mode de jeu</h2>
+  <p class="small muted">
+    <b>Standard</b> : roster construit par points, mission via la matrix 11e (dispositions de
+    force, secondaires, layout de terrain).<br>
+    <b>Patrouille (Combat Patrol)</b> : Patrouilles à composition fixe (sans budget de points),
+    6 missions dédiées, champ de bataille 44"x30".
+  </p>
+  <form method="post" action="{{ url_for('setup.set_game_mode_route', gid=g.id) }}">
+    <label style="margin-right:14px"><input type="radio" name="game_mode" value="standard"
+      {{ 'checked' if g.game_mode=='standard' else '' }} onchange="this.form.submit()"> Standard</label>
+    <label><input type="radio" name="game_mode" value="combat_patrol"
+      {{ 'checked' if g.game_mode=='combat_patrol' else '' }} onchange="this.form.submit()"> Patrouille</label>
+    <noscript><button class="ghost small" type="submit" style="margin-top:6px">Appliquer</button></noscript>
+  </form>
+</div>
+
+<div class="card">
   <h2>Mission</h2>
-  <p class="small muted">Choisis les dispositions de force, les secondaires et le layout de terrain.
-    Les cartes primaires sont auto-résolues depuis la matrix 11e.</p>
-  <a class="btn" href="{{ url_for('setup.mission', gid=g.id) }}">{{ 'Modifier' if has_mission else 'Configurer' }} la mission</a>
+  {% if g.game_mode == 'combat_patrol' %}
+    <p class="small muted">
+      {% if g.combat_patrol_mission %}Mission choisie : <b>{{ g.combat_patrol_mission }}</b>
+      {% else %}Aucune mission de Patrouille choisie pour l'instant.{% endif %}
+    </p>
+    <a class="btn" href="{{ url_for('setup.combat_patrol_mission', gid=g.id) }}">
+      {{ 'Modifier' if g.combat_patrol_mission else 'Choisir' }} la mission Patrouille
+    </a>
+  {% else %}
+    <p class="small muted">Choisis les dispositions de force, les secondaires et le layout de terrain.
+      Les cartes primaires sont auto-résolues depuis la matrix 11e.</p>
+    <a class="btn" href="{{ url_for('setup.mission', gid=g.id) }}">{{ 'Modifier' if has_mission else 'Configurer' }} la mission</a>
+  {% endif %}
 </div>
 
 <div class="card">

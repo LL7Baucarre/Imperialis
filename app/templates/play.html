@@ -171,7 +171,26 @@
   <div>
     <div class="card">
       <h2>Mission</h2>
-      {% if missions %}
+      {% if g.game_mode == 'combat_patrol' %}
+        {% if cp_mission %}
+        <div class="small"><b>{{ cp_mission.name }}</b> <span class="muted">— Patrouille</span></div>
+        <div class="det-rule" style="margin-top:6px">
+          <div class="small"><b>{{ cp_mission.rule_name }}</b> — règle de mission</div>
+          <div class="small muted">{{ cp_mission.rule_text }}</div>
+        </div>
+        <div class="det-rule">
+          <div class="small"><b>{{ cp_mission.objective_name }}</b> — objectif principal</div>
+          <div class="small muted">{{ cp_mission.objective_text }}</div>
+        </div>
+        <div class="det-rule">
+          <div class="small"><b>Sécuriser les pions d'objectif</b> — règle commune Patrouille</div>
+          <div class="small muted">{{ cp_secure_rule }}</div>
+        </div>
+        <div class="small muted" style="margin-top:6px">Champ de bataille {{ cp_battlefield_size }} · {{ cp_mission.battlefield_note }}</div>
+        {% else %}
+        <p class="muted small">Aucune mission de Patrouille choisie. <a href="{{ url_for('setup.combat_patrol_mission', gid=g.id) }}">Choisir</a></p>
+        {% endif %}
+      {% elif missions %}
       <div class="grid2">
         <div class="mission-card">
           <div class="small"><span class="pill p1">J1</span> {{ missions.primary_card_p1 or '—' }}</div>

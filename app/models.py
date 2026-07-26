@@ -15,6 +15,8 @@ CREATE TABLE IF NOT EXISTS games (
     active_player_seat INTEGER NOT NULL DEFAULT 1,
     first_player_seat INTEGER NOT NULL DEFAULT 1,
     points_limit      INTEGER NOT NULL DEFAULT 2000,
+    game_mode         TEXT NOT NULL DEFAULT 'standard',  -- standard | combat_patrol
+    combat_patrol_mission TEXT,                          -- nom de la mission Patrouille choisie
     created_at        TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
@@ -193,6 +195,23 @@ def get_points_limit(gid) -> int:
 
 def set_points_limit(gid, limit: int):
     get_db().execute("UPDATE games SET points_limit=? WHERE id=?", (int(limit), gid))
+    get_db().commit()
+
+
+def set_game_mode(gid, mode: str):
+    """mode : 'standard' (roster construit par points) ou 'combat_patrol'
+    (Patrouille — Patrouilles à composition fixe, sans budget de points)."""
+    if mode not in ("standard", "combat_patrol"):
+        return
+    get_db().execute("UPDATE games SET game_mode=? WHERE id=?", (mode, gid))
+    get_db().commit()
+
+
+def set_combat_patrol_mission(gid, mission_name: str | None):
+    get_db().execute(
+        "UPDATE games SET combat_patrol_mission=? WHERE id=?",
+        (mission_name or None, gid),
+    )
     get_db().commit()
 
 

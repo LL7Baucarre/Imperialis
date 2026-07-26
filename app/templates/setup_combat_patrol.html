@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Mission Patrouille — {{ g.name }}{% endblock %}
+{% block heading %}Mission — Patrouille (Combat Patrol){% endblock %}
+{% block content %}
+
+<div class="card">
+  <h2>Séquence d'une partie de Patrouille</h2>
+  <p class="small muted">Format sans budget de points : chaque joueur amène une Patrouille à
+    composition fixe (typiquement le contenu d'une boîte Combat Patrol) plutôt qu'une liste
+    construite par points. Champ de bataille {{ battlefield_size }}, 5 rounds de bataille.</p>
+  <ol class="small">
+    {% for step in sequence %}<li style="margin-bottom:4px">{{ step }}</li>{% endfor %}
+  </ol>
+  <div class="det-rule">
+    <div class="small"><b>Règle commune à toutes les missions</b> — Sécuriser les pions d'objectif</div>
+    <div class="small muted">{{ secure_rule }}</div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>Choisir la mission</h2>
+  <form method="post" action="{{ url_for('setup.combat_patrol_mission', gid=g.id) }}" id="cp-form">
+    <select name="mission_name" id="cp-select" style="width:100%;padding:6px;margin-bottom:8px">
+      <option value="">— Choisir —</option>
+      {% for m in missions %}
+        <option value="{{ m.name }}" {{ 'selected' if m.name==current else '' }}>{{ m.name }}</option>
+      {% endfor %}
+    </select>
+    <button class="ghost small" type="button" onclick="rollD6()">🎲 Tirer au hasard (1D6)</button>
+    <button class="primary" type="submit">Enregistrer &amp; continuer →</button>
+    <a class="btn" href="{{ url_for('setup.setup_hub', gid=g.id) }}">← Hub</a>
+  </form>
+  <div id="cp-roll-result" class="small muted" style="margin-top:6px"></div>
+</div>
+
+<div class="card">
+  <h2>Les 6 missions</h2>
+  {% for m in missions %}
+  <details class="unit" {{ 'open' if m.name==current else '' }}>
+    <summary><b>{{ loop.index }}. {{ m.name }}</b></summary>
+    <div class="small" style="margin:6px 0">
+      <b>{{ m.rule_name }}</b>
+      <div class="muted">{{ m.rule_text }}</div>
+    </div>
+    <div class="small" style="margin:6px 0">
+      <b>Objectif principal — {{ m.objective_name }}</b>
+      <div class="muted">{{ m.objective_text }}</div>
+    </div>
+    <div class="small muted">{{ m.battlefield_note }}</div>
+  </details>
+  {% endfor %}
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+const MISSION_NAMES = {{ missions | map(attribute='name') | list | tojson }};
+function rollD6() {
+  const roll = Math.floor(Math.random() * 6);
+  const name = MISSION_NAMES[roll];
+  document.getElementById('cp-select').value = name;
+  document.getElementById('cp-roll-result').textContent = `D6 = ${roll + 1} → ${name}`;
+}
+</script>
+{% endblock %}
